@@ -9,6 +9,6 @@
   "author": "DoomInAJar",
   "license": "ISC",
   "dependencies": {
-    "electron": "1.4.13"
+    "electron": "7.2.4"
   }
 }
