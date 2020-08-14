@@ -1,14 +1,58 @@
 {
   "name": "doom-red",
-  "version": "1.0.0",
-  "description": "",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/start.js",
+  "homepage": "./",
+  "build": {
+    "appId": "doom-red",
+    "directories": {
+      "buildResources": "assets"
+    },
+    "win": {
+      "category": "public.app-category.games",
+      "iconUrl": "path-to-icon.png"
+    },
+    "mac": {
+      "category": "public.app-category.games",
+      "iconUrl": "path-to-icon.png"
+    }
   },
-  "author": "DoomInAJar",
-  "license": "ISC",
   "dependencies": {
-    "electron": "7.2.4"
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "electron": "^9.2.0",
+    "electron-is-dev": "^1.2.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "3.4.3"
+  },
+  "scripts": {
+    "electron": "nodemon --exec \"\"electron .\"\"",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "electron-builder": "^22.8.0",
+    "electron-reload": "^1.5.0",
+    "nodemon": "^2.0.4"
   }
 }
