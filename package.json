@@ -2,7 +2,7 @@
   "name": "doom-red",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,6 +14,9 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/bacowan/DoomRedV2/issues"
+  },
+  "devDependencies": {
+    "electron": "9.2.0"
   },
   "homepage": "https://github.com/bacowan/DoomRedV2#readme"
 }
