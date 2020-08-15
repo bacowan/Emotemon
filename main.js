@@ -1,4 +1,4 @@
-const {app, BrowserWindow} = require('electron') 
+const {app, BrowserWindow, Menu} = require('electron') 
 const url = require('url') 
 const path = require('path')  
 
@@ -6,12 +6,47 @@ let win
 
 function createWindow() { 
    win = new BrowserWindow({width: 800, height: 600}) 
-   win.setMenu(null);
+   win.setMenu(createMenu());
    win.loadURL(url.format ({ 
       pathname: path.join(__dirname, 'index.html'), 
       protocol: 'file:', 
       slashes: true 
    })) 
-}  
+}
+
+function createMenu() {
+   return Menu.buildFromTemplate([
+      {
+         label: 'File',
+         submenu: [
+            { label: 'Load Configuration' },
+            { label: 'Save Configuration' },
+            { label: 'Exit' }
+         ]
+      },
+      {
+         label: 'View',
+         submenu: [
+            {
+               label: 'Logs',
+               type: 'checkbox',
+               checked: false
+            },
+            {
+               label: 'Queue',
+               type: 'checkbox',
+               checked: false
+            }
+         ]
+      },
+      {
+         label: 'Help',
+         submenu: [
+            { label: 'Instructions' },
+            { label: 'About' }
+         ]
+      }
+   ])
+}
 
 app.on('ready', createWindow)
