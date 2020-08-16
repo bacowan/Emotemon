@@ -3,7 +3,8 @@
 	<head>
 		<meta charset = "UTF-8">
 		<title>DoomRed</title>
-		<link rel="stylesheet" type="text/css" href="./styles.css"/>
+        <link rel="stylesheet" type="text/css" href="./styles.css"/>
+        <script src="./bot.js"></script>
 	</head>
 
 	<body>
@@ -46,7 +47,7 @@
 		</div>
 		<div class="column-half">
             <h2>Configuration</h2>
-            <form>
+            <form onsubmit="return runBotSubmit()" method="POST">
                 <label>Bot Name</label>
                 <input type="text" id="botName" name="botName"/>
                 <br>

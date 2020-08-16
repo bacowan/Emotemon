@@ -18,5 +18,8 @@
   "devDependencies": {
     "electron": "9.2.0"
   },
-  "homepage": "https://github.com/bacowan/DoomRedV2#readme"
+  "homepage": "https://github.com/bacowan/DoomRedV2#readme",
+  "dependencies": {
+    "tmi.js": "^1.5.0"
+  }
 }
