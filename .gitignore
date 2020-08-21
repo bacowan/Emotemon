@@ -1,6 +1,6 @@
 
 doom-red-win32-x64/*
-./emoteCache.js
+emoteCache.json
 
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,node

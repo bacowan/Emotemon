@@ -2,23 +2,34 @@ const fs = require('fs');
 const clientId = '48jcq0qugs9x7cscqj364iimlpw9gm';
 const emoteCacheFileName = 'emoteCache.json';
 
-function updateEmoteCache() {
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState === 4) {
-            const emotes = xmlHttp.responseText;
-            fs.writeFile(emoteCacheFileName, emotes, err => {
-                if (err == null) {
-                    updateCacheLastUpdatedText();
-                }
-            });
-            // TODO: show user that load is happening/done.
+await function updateEmoteCache() {
+    // TODO: show user that load is happening/done.
+    const response = await fetch("https://api.twitch.tv/kraken/chat/emoticon_images", {
+        headers: {
+            Accept: 'application/vnd.twitchtv.v5+json',
+            'Client-ID': clientId
         }
+    });
+
+    if (response.ok) {
+        const emotes = JSON.stringify(
+            parseDownloadedEmotes(response.json()));
+        fs.writeFile(emoteCacheFileName, emotes, err => {
+            if (err == null) {
+                updateCacheLastUpdatedText();
+            }
+        });
     }
-    xmlHttp.open("GET", "https://api.twitch.tv/kraken/chat/emoticon_images");
-    xmlHttp.setRequestHeader('Accept', 'application/vnd.twitchtv.v5+json');
-    xmlHttp.setRequestHeader('Client-ID', clientId);
-    xmlHttp.send(null);
+    else {
+        // TODO: Error handling
+    }
+
+    function parseDownloadedEmotes(emoteJson) {
+        return emoteJson.emoticons.reduce((map, e) => {
+            map[e.code] = e.id;
+            return map;
+        }, {});
+    }
 }
 
 function onload() {
@@ -29,7 +40,7 @@ function updateCacheLastUpdatedText() {
     fs.stat(emoteCacheFileName, (err, stats) => {
         const emoteCacheText = document.getElementById("emoteCacheLastUpdate");
         if (err != null) {
-            emoteCacheText.innerHTML = err;
+            emoteCacheText.innerHTML = "never";
         }
         else {
             emoteCacheText.innerHTML = stats.mtime;

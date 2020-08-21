@@ -6,6 +6,17 @@ function runBotSubmit() {
 }
 
 function runBot() {
+    const emoteJson = fs.readFile(emoteCacheFileName, (err, data) => {
+        if (err != null) {
+            // TODO: Error handling
+        }
+        else {
+            runBotWithEmotes(JSON.parse(data));
+        }
+    });
+}
+
+function runBotWithEmotes(emotes) {
     const options = {
         identity: {
             username: document.getElementById('botName').value,
@@ -33,9 +44,18 @@ function runBot() {
         }
     }
 
-    function handlePokemonCommand(commandValues) {
+    async function handlePokemonCommand(commandValues) {
         if (commandValues.length > 1) {
             var emoteParam = commandValues[1];
+            var emoteId = emotes[emoteParam]
+            if (emoteParam != null) {
+                // TODO: Error handling
+            }
+            else {
+                const emoteImage = await downloadEmote(emoteId);
+                const emoteImageFormatted = formatEmote(emoteImage);
+                queueEmote(emoteImageFormatted);
+            }
         }
     }
 
