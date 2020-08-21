@@ -23,7 +23,20 @@ function runBot() {
 
     function onMessage (target, context, msg, isSelf) {
         if (isSelf) { return; }
-        console.log(msg);
+        
+        const commandValues = msg.split(" ");
+        if (commandValues.length > 0) {
+            const commandName = commandValues[0];
+            if (commandName === '!pokemon') {
+                handlePokemonCommand(commandValues);
+            }
+        }
+    }
+
+    function handlePokemonCommand(commandValues) {
+        if (commandValues.length > 1) {
+            var emoteParam = commandValues[1];
+        }
     }
 
     function onConnected (addr, port) {
