@@ -1,9 +1,11 @@
+const lzjs = require('lzjs');
+
 const emoteUrlTop = "https://static-cdn.jtvnw.net/emoticons/v1/1/1.0"
 const emoteSize = "1.0";
 
-async function downloadEmote(emoteId) {
+function downloadEmote(emoteId) {
     const fullEmoteUrl = emoteUrlTop + "/" + emoteId + "/" + emoteSize;
-    const response = await fetch(fullEmoteUrl);
+    const response = fetch(fullEmoteUrl);
     if (response.ok) {
         return response.blob();
     }
@@ -13,4 +15,10 @@ async function downloadEmote(emoteId) {
 }
 
 function formatEmote(rawImage) {
+}
+
+function testLszz() {
+    const palette = '001F1F1F1F1F1F1F1F1F1F1F1F1F1F1F';
+    const paletteBuffer = Buffer(palette, "hex")
+    const compressedPalette = lzjs.compress(paletteBuffer);
 }

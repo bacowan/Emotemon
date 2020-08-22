@@ -44,7 +44,7 @@ function runBotWithEmotes(emotes) {
         }
     }
 
-    async function handlePokemonCommand(commandValues) {
+    function handlePokemonCommand(commandValues) {
         if (commandValues.length > 1) {
             var emoteParam = commandValues[1];
             var emoteId = emotes[emoteParam]
@@ -52,7 +52,7 @@ function runBotWithEmotes(emotes) {
                 // TODO: Error handling
             }
             else {
-                const emoteImage = await downloadEmote(emoteId);
+                const emoteImage = downloadEmote(emoteId);
                 const emoteImageFormatted = formatEmote(emoteImage);
                 queueEmote(emoteImageFormatted);
             }
