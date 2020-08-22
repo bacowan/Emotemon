@@ -1,256 +1,252 @@
-// modified from https://github.com/magical/nlzss
+class DefaultDict {
+    constructor() {
+        this.dict = {};
+    }
 
+    add(key, value) {
+        let list = this.dict[key];
+        if (list == null) {
+            list = [];
+            this.dict[key] = list;
+        }
+        list.push(value);
+    }
 
-from sys import stderr
+    get(key) {
+        let ret = this.dict[key];
+        if (ret == null) {
+            ret = [];
+            this.dict[key] = ret;
+        }
+        return ret;
+    }
+}
 
-from collections import defaultdict
-from operator import itemgetter
-from struct import pack, unpack
+class SlidingWindow {
+    constructor(buf) {
+        // The size of the sliding window
+        this.size = 4096;
+        // The minimum displacement.
+        this.disp_min = 2;
+        // The hard minimum — a disp less than this can't be represented in the
+        // compressed stream.
+        this.disp_start = 1;
+        // The minimum length for a successful match in the window
+        this.match_min = 3;
+        // The maximum length of a successful match, inclusive.
+        this.match_max = 3 + 0xf;
 
-class SlidingWindow:
-    # The size of the sliding window
-    size = 4096
+        this.data = buf;
+        this.hash = new DefaultDict();
+        this.full = false;
 
-    # The minimum displacement.
-    disp_min = 2
+        this.start = 0;
+        this.stop = 0;
+        this.index = 0;
+    }
 
-    # The hard minimum — a disp less than this can't be represented in the
-    # compressed stream.
-    disp_start = 1
+    next() {
+        if (this.index < this.disp_start - 1) {
+            this.index++;
+            return;
+        }
 
-    # The minimum length for a successful match in the window
-    match_min = 1
+        if (this.full) {
+            const oldItem = this.data[this.start];
+            this.hash.get(oldItem).pop();
+        }
 
-    # The maximum length of a successful match, inclusive.
-    match_max = None
+        const item = this.data[this.stop];
+        this.hash.get(item).push(this.stop);
+        this.stop++;
+        this.index++;
 
-    def __init__(self, buf):
-        self.data = buf
-        self.hash = defaultdict(list)
-        self.full = False
+        if (this.full) {
+            this.start++;
+        }
+        else if (this.size <= this.stop) {
+            this.full = true;
+        }
+    }
 
-        self.start = 0
-        self.stop = 0
-        #self.index = self.disp_min - 1
-        self.index = 0
+    advance(n = 1) {
+        // Advance the window by n bytes
+        for (let i = 0; i < n; i++) {
+            this.next();
+        }
+    }
 
-        assert self.match_max is not None
+    search() {
+        const counts = [];
+        const indices = this.hash.get(this.data[this.index]);
+        for (const i of indices) {
+            const matchlen = this.match(i, this.index);
+            if (matchlen >= this.match_min) {
+                const disp = this.index - i;
+                if (this.disp_min <= disp) {
+                    counts.push([matchlen, -disp]);
+                    if (matchlen >= this.match_max) {
+                        return counts[counts.length - 1];
+                    }
+                }
+            }
+        }
 
-    def next(self):
-        if self.index < self.disp_start - 1:
-            self.index += 1
-            return
+        if (counts.length > 0) {
+            return counts.reduce((next, current) => {
+                if (next[0] > current[0]) {
+                    return next;
+                }
+                else {
+                    return current;
+                }
+            }, counts[0]);
+        }
+        else {
+            return null;
+        }
+    }
 
-        if self.full:
-            olditem = self.data[self.start]
-            assert self.hash[olditem][0] == self.start
-            self.hash[olditem].pop(0)
+    match(start, bufstart) {
+        const size = this.index - start;
 
-        item = self.data[self.stop]
-        self.hash[item].append(self.stop)
-        self.stop += 1
-        self.index += 1
+        if (size === 0) {
+            return 0;
+        }
 
-        if self.full:
-            self.start += 1
-        else:
-            if self.size <= self.stop:
-                self.full = True
+        let matchlen = 0;
 
-    def advance(self, n=1):
-        """Advance the window by n bytes"""
-        for _ in range(n):
-            self.next()
+        for (var i = 0; i < Math.min(this.data.length - bufstart, this.match_max); i++) {
+            if (this.data[start + (i % size)] == this.data[bufstart + i]) {
+                matchlen += 1;
+            }
+            else {
+                break;
+            }
+        }
+        return matchlen;
+    }
+}
 
-    def search(self):
-        match_max = self.match_max
-        match_min = self.match_min
+function* _compress(input) {
+    // Generates a stream of tokens. Either a byte (int) or a tuple of (count,
+    // displacement).
+    slidingWindow = new SlidingWindow(input);
 
-        counts = []
-        indices = self.hash[self.data[self.index]]
-        for i in indices:
-            matchlen = self.match(i, self.index)
-            if matchlen >= match_min:
-                disp = self.index - i
-                #assert self.index - disp >= 0
-                #assert self.disp_min <= disp < self.size + self.disp_min
-                if self.disp_min <= disp:
-                    counts.append((matchlen, -disp))
-                    if matchlen >= match_max:
-                        #assert matchlen == match_max
-                        return counts[-1]
-
-        if counts:
-            match = max(counts, key=itemgetter(0))
-            return match
-
-        return None
-
-    def match(self, start, bufstart):
-        size = self.index - start
-
-        if size == 0:
-            return 0
-
-        matchlen = 0
-        it = range(min(len(self.data) - bufstart, self.match_max))
-        for i in it:
-            if self.data[start + (i % size)] == self.data[bufstart + i]:
-                matchlen += 1
-            else:
-                break
-        return matchlen
-
-class NLZ10Window(SlidingWindow):
-    size = 4096
-
-    match_min = 3
-    match_max = 3 + 0xf
-
-class NLZ11Window(SlidingWindow):
-    size = 4096
-
-    match_min = 3
-    match_max = 0x111 + 0xFFFF
-
-class NOverlayWindow(NLZ10Window):
-    disp_min = 3
-
-def _compress(input, windowclass=NLZ10Window):
-    """Generates a stream of tokens. Either a byte (int) or a tuple of (count,
-    displacement)."""
-
-    window = windowclass(input)
-
-    i = 0
-    while True:
-        if len(input) <= i:
-            break
-        match = window.search()
-        if match:
-            yield match
-            #if match[1] == -283:
-            #    raise Exception(match, i)
-            window.advance(match[0])
-            i += match[0]
-        else:
+    let i = 0;
+    while (true) {
+        if (input.length <= i) {
+            break;
+        }
+        const match = slidingWindow.search();
+        if (match != null) {
+            yield match;
+            slidingWindow.advance(match[0]);
+            i += match[0];
+        }
+        else {
             yield input[i]
-            window.next()
-            i += 1
+            slidingWindow.next();
+            i++;
+        }
+    }
+}
 
-def packflags(flags):
-    n = 0
-    for i in range(8):
-        n <<= 1
-        try:
-            if flags[i]:
-                n |= 1
-        except IndexError:
-            pass
-    return n
+function* chunkit(it, n) {
+    let buf = [];
+    for (const i of it) {
+        buf.push(i);
+        if (n <= buf.length) {
+            yield buf;
+            buf = [];
+        }
+    }
+    if (buf.length > 0) {
+        yield buf;
+    }
+}
 
-def chunkit(it, n):
-    buf = []
-    for x in it:
-        buf.append(x)
-        if n <= len(buf):
-            yield buf
-            buf = []
-    if buf:
-        yield buf
+function packflags(flags) {
+    let n = 0;
+    for (let i = 0; i < 8; i++) {
+        n = n << 1;
+        try {
+            if (flags[i]) {
+                n = n | 1;
+            }
+        }
+        catch(err) {
+            continue;
+        }
+    }
+    return n;
+}
 
-def compress(input, out):
-    # header
-    out.write(pack("<L", (len(input) << 8) + 0x10))
+function pack(value, size, littleEndian=false) {
+    let output = [];
+    while (value > 0) {
+        const byte = value % 0x100;
+        output.push(byte);
+        value = value >> 8;
+    }
 
-    # body
-    length = 0
-    for tokens in chunkit(_compress(input), 8):
-        flags = [type(t) == tuple for t in tokens]
-        out.write(pack(">B", packflags(flags)))
+    while (output.length < size) {
+        output.push(0);
+    }
 
-        for t in tokens:
-            if type(t) == tuple:
-                count, disp = t
-                count -= 3
-                disp = (-disp) - 1
-                assert 0 <= disp < 4096
-                sh = (count << 12) | disp
-                out.write(pack(">H", sh))
-            else:
-                out.write(pack(">B", t))
+    if (!littleEndian) {
+        output = output.reverse();
+    }
+    return output;
+}
 
-        length += 1
-        length += sum(2 if f else 1 for f in flags)
+function compress(input) {
+    output = []
 
-    # padding
-    padding = 4 - (length % 4 or 4)
-    if padding:
-        out.write(b'\xff' * padding)
+    // Header
+    // (contains the size of the decompressed data. 4 bytes long, little endian)
+    // Note: I'm not sure what the purpose of the 0x10 is (the GBA expects it though)
+    const sizeAsHex = pack((input.length << 8) + 0x10, size=4, littleEndian=true);
+    Array.prototype.push.apply(
+        output,
+        sizeAsHex);
 
-def compress_nlz11(input, out):
-    # header
-    out.write(pack("<L", (len(input) << 8) + 0x11))
+    // Body
+    let length = 0;
+    for (const tokens of chunkit(_compress(input), 8)) {
+        const flags = tokens.map(t => Array.isArray(t));
+        Array.prototype.push.apply(
+            output,
+            pack(packflags(flags), size=1));
 
-    # body
-    length = 0
-    for tokens in chunkit(_compress(input, windowclass=NLZ11Window), 8):
-        flags = [type(t) == tuple for t in tokens]
-        out.write(pack(">B", packflags(flags)))
-        length += 1
+        for (const t of tokens) {
+            if (Array.isArray(t)) {
+                var [count, disp] = t;
+                count -= 3;
+                disp = (-disp) - 1;
+                const sh = (count << 12) | disp;
+                Array.prototype.push.apply(
+                    output,
+                    pack(sh, size=2));
+            }
+            else {
+                Array.prototype.push.apply(
+                    output,
+                    pack(t, size=1));
+            }
+        }
 
-        for t in tokens:
-            if type(t) == tuple:
-                count, disp = t
-                disp = (-disp) - 1
-                #if disp == 282:
-                #    raise Exception
-                assert 0 <= disp <= 0xFFF
-                if count <= 1 + 0xF:
-                    count -= 1
-                    assert 2 <= count <= 0xF
-                    sh = (count << 12) | disp
-                    out.write(pack(">H", sh))
-                    length += 2
-                elif count <= 0x11 + 0xFF:
-                    count -= 0x11
-                    assert 0 <= count <= 0xFF
-                    b = count >> 4
-                    sh = ((count & 0xF) << 12) | disp
-                    out.write(pack(">BH", b, sh))
-                    length += 3
-                elif count <= 0x111 + 0xFFFF:
-                    count -= 0x111
-                    assert 0 <= count <= 0xFFFF
-                    l = (1 << 28) | (count << 12) | disp
-                    out.write(pack(">L", l))
-                    length += 4
-                else:
-                    raise ValueError(count)
-            else:
-                out.write(pack(">B", t))
-                length += 1
+        length++;
+        length += flags.reduce((a, b) => {
+            return a + (b ? 2 : 1);
+        }, 0);
+    }
 
-    # padding
-    padding = 4 - (length % 4 or 4)
-    if padding:
-        out.write(b'\xff' * padding)
+    // padding
+    const padding = 4 - ((length % 4) || 4);
+    for (let i = 0; i < padding; i++) {
+        output.push(0xFF);
+    }
 
-def dump_compress_nlz11(input, out):
-    # body
-    length = 0
-    def dump():
-        for t in _compress(input, windowclass=NLZ11Window):
-            if type(t) == tuple:
-                yield t
-    from pprint import pprint
-    pprint(list(dump()))
-
-if __name__ == '__main__':
-    from sys import stdout, argv
-    data = open(argv[1], "rb").read()
-    stdout = stdout.detach()
-    #compress(data, stdout)
-    compress_nlz11(data, stdout)
-
-    #dump_compress_nlz11(data, stdout)
+    return output;
+}
