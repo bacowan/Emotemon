@@ -1,11 +1,9 @@
-const lzjs = require('lzjs');
-
 const emoteUrlTop = "https://static-cdn.jtvnw.net/emoticons/v1/1/1.0"
 const emoteSize = "1.0";
 
-function downloadEmote(emoteId) {
+async function downloadEmote(emoteId) {
     const fullEmoteUrl = emoteUrlTop + "/" + emoteId + "/" + emoteSize;
-    const response = fetch(fullEmoteUrl);
+    const response = await fetch(fullEmoteUrl);
     if (response.ok) {
         return response.blob();
     }
@@ -20,6 +18,7 @@ function formatEmote(rawImage) {
 function testLszz() {
     //const palette = '001F1F1F1F1F1F1F1F1F1F1F1F1F1F1F';
     //const paletteBuffer = buffer.from(palette, "hex")
-    const palette = [0x00, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F];
+    const palette = [0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f];
     const compressedPalette = compress(palette);
+    console.log(output.map(o => o.toString(16).padStart(2, '0')).join(' '));
 }

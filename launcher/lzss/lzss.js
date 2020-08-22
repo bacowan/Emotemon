@@ -1,3 +1,6 @@
+// adapted from https://github.com/magical/nlzss/blob/master/compress.py
+// (see LICENSE file)
+
 class DefaultDict {
     constructor() {
         this.dict = {};
