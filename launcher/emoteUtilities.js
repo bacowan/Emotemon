@@ -37,6 +37,9 @@ async function testFormatEmote() {
 		var palette = paletteQuantizer.quantizeSync();
 		var imageQuantizer = new imageq.image.NearestColor(distanceCalculator);
 		var resultPointContainer = imageQuantizer.quantizeSync(pointContainer, palette);
+
+		
+
 		
 	//}
 
