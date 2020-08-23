@@ -8,14 +8,24 @@ currentBattleType = 0
 
 function run()
     print 'battle start'
-    memory.writebyte(bulbasaurPalettePointer, 0xE8)
-    memory.writebyte(bulbasaurPalettePointer+1, 0x08)
-    memory.writebyte(bulbasaurPalettePointer+2, 0xD3)
-    memory.writebyte(bulbasaurPalettePointer+3, 0x08)
-    memory.writebyte(bulbasaurPalettePointer+4, 0x02)
-    memory.writebyte(bulbasaurPalettePointer+5, 0x00)
-    memory.writebyte(bulbasaurPalettePointer+6, 0x00)
-    memory.writebyte(bulbasaurPalettePointer+7, 0x00)
+
+    f = io.open('\\\\.\\pipe\\doomred', 'r')
+    io.input(f)
+    bytes = io.read()
+    io.close(f)
+    print(bytes)
+
+
+
+
+    --memory.writebyte(bulbasaurPalettePointer, 0xE8)
+    --memory.writebyte(bulbasaurPalettePointer+1, 0x08)
+    --memory.writebyte(bulbasaurPalettePointer+2, 0xD3)
+   -- memory.writebyte(bulbasaurPalettePointer+3, 0x08)
+    --memory.writebyte(bulbasaurPalettePointer+4, 0x02)
+    --memory.writebyte(bulbasaurPalettePointer+5, 0x00)
+    --memory.writebyte(bulbasaurPalettePointer+6, 0x00)
+    --memory.writebyte(bulbasaurPalettePointer+7, 0x00)
 end
 
 function battleStarting()

@@ -17,6 +17,8 @@ function runBot() {
 }
 
 function runBotWithEmotes(emotes) {
+    const emulatorPipe = setupEmulatorPipe();
+    emulatorPipe.sendEmote();
     const options = {
         identity: {
             username: document.getElementById('botName').value,
