@@ -53,4 +53,5 @@ function createMenu() {
    ])
 }
 
+app.allowRendererProcessReuse = false;
 app.on('ready', createWindow)

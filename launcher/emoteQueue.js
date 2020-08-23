@@ -1,6 +1,4 @@
-function queueEmote(emote) {
-
-}const net = require('net');
+const net = require('net');
 const path = require('path');
 
 function setupEmulatorPipe() {

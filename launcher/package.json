@@ -4,7 +4,8 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "rebuild": "electron-rebuild -f -w canvas"
   },
   "repository": {
     "type": "git",
@@ -16,11 +17,15 @@
     "url": "https://github.com/bacowan/DoomRedV2/issues"
   },
   "devDependencies": {
-    "electron": "9.2.0"
+    "electron": "9.2.0",
+    "electron-rebuild": "^2.0.0"
   },
   "homepage": "https://github.com/bacowan/DoomRedV2#readme",
   "dependencies": {
+    "image-q": "^2.1.2",
     "lzjs": "^1.3.0",
+    "pngjs": "^5.0.0",
+    "resize-img": "^2.0.0",
     "tmi.js": "^1.5.0"
   }
 }
