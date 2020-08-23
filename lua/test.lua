@@ -1,5 +1,6 @@
 local wildPokemonBattleFunction = 0x08010672
 local bulbasaurPalettePointer = 0x08237384
+local bulbasaurPalette = 0x08D2FE78
 local battleTypePointer = 0x02022B4C
 
 print 'script running'
@@ -11,21 +12,23 @@ function run()
 
     f = io.open('\\\\.\\pipe\\doomred', 'r')
     io.input(f)
-    bytes = io.read()
+    bytes = io.read("*l")
     io.close(f)
     print(bytes)
+    byteArray = hexStringToByteArray(bytes)
 
+    for i=1,#byteArray do
+        memory.writebyte(bulbasaurPalette+i-1, byteArray[i])
+    end
+    
+end
 
-
-
-    --memory.writebyte(bulbasaurPalettePointer, 0xE8)
-    --memory.writebyte(bulbasaurPalettePointer+1, 0x08)
-    --memory.writebyte(bulbasaurPalettePointer+2, 0xD3)
-   -- memory.writebyte(bulbasaurPalettePointer+3, 0x08)
-    --memory.writebyte(bulbasaurPalettePointer+4, 0x02)
-    --memory.writebyte(bulbasaurPalettePointer+5, 0x00)
-    --memory.writebyte(bulbasaurPalettePointer+6, 0x00)
-    --memory.writebyte(bulbasaurPalettePointer+7, 0x00)
+function hexStringToByteArray(string)
+    array = {}
+    for i=1,#string/2 do
+        array[#array+1] = tonumber(string:sub(i*2-1,i*2), 16)
+    end
+    return array
 end
 
 function battleStarting()
@@ -44,4 +47,3 @@ function onFrame()
     end
 end
 gui.register(onFrame)
---memory.registerexec(wildPokemonBattleFunction,run)
