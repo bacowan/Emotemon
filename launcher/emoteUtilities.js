@@ -39,11 +39,37 @@ async function quantize(image) {
 	var imageQuantizer = new imageq.image.NearestColor(distanceCalculator);
 	var resultPointContainer = imageQuantizer.quantizeSync(pointContainer, palette);
 
-	return { pixels: resultPointContainer, palette: palette };
+	const sortedPalette = palette._pointArray.sort((a,b) => b.a - a.a); // Sort by the alpha value so that full alpha ends up in position 0
+	
+	const paletteIndexes = Object.fromEntries(
+		sortedPalette.map((point, index) => [point.uint32, index])
+	);
+	
+	const formattedPalette = sortedPalette.map(i => {
+		const val = (i.r >> 3) +
+			((i.g >> 3) << 5) +
+			((i.b >> 3) << 5);
+		return [
+			val >> 8,
+			val % 0x100
+		]
+	}).flat();
+	
+	const formattedPixels = resultPointContainer._pointArray.map(p => {
+		if (p.a === 255) {
+			return 0;
+		}
+		else {
+			return paletteIndexes[p.uint32];
+		}
+	});
+
+	return { pixels: formattedPixels, palette: formattedPalette };
 }
 
 function formatAsString(pixels, palette) {
-
+	return pixels.map(p => p.toString(16).padStart(2, '0')).join('') + "\r\n" +
+		palette.map(p => p.toString(16).padStart(2, '0')).join('') + "\r\n";
 }
 
 function testLszz() {

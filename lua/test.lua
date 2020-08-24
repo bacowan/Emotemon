@@ -1,7 +1,11 @@
 local wildPokemonBattleFunction = 0x08010672
 local bulbasaurPalettePointer = 0x08237384
-local bulbasaurPalette = 0x08D2FE78
+local bulbasaurPalette = 0x08EC24B0--0x08D2FE78
+local bulbasaurSprite = 0x08D305AC
 local battleTypePointer = 0x02022B4C
+local romStartAddress = 0x08000000
+local romEndAddress = 0x09FC03FF
+local surroundingBlankSpace = 0
 
 print 'script running'
 
@@ -12,14 +16,34 @@ function run()
 
     f = io.open('\\\\.\\pipe\\doomred', 'r')
     io.input(f)
-    bytes = io.read("*l")
-    io.close(f)
-    print(bytes)
-    byteArray = hexStringToByteArray(bytes)
 
-    for i=1,#byteArray do
-        memory.writebyte(bulbasaurPalette+i-1, byteArray[i])
+    emotePixels = io.read("*l")
+    if #emotePixels == 0 then
+        return
     end
+    emotePalette = io.read("*l")
+    if #emotePalette == 0 then
+        return
+    end
+
+    io.close(f)
+    print(emotePixels)
+    print(emotePalette)
+    emotePaletteByteArray = hexStringToByteArray(emotePalette)
+    emotePixelsByteArray = hexStringToByteArray(emotePixels)
+
+    memory.writebyte(bulbasaurPalettePointer, 0xB0)
+    memory.writebyte(bulbasaurPalettePointer+1, 0x24)
+    memory.writebyte(bulbasaurPalettePointer+2, 0xEC)
+    memory.writebyte(bulbasaurPalettePointer+3, 0x08)
+
+    for i=1,#emotePaletteByteArray do
+        memory.writebyte(bulbasaurPalette+i-1, emotePaletteByteArray[i])
+    end
+
+    --for i=1,#emotePixelsByteArray do
+    --    memory.writebyte(bulbasaurSprite+i-1, emotePixelsByteArray[i])
+    --end
     
 end
 
@@ -31,9 +55,28 @@ function hexStringToByteArray(string)
     return array
 end
 
+function findEmptySpace(length)
+    emptyByteCount = 0
+    
+    offset = romStartAddress
+    while offset < romEndAddress do
+        if memory.readbyte(offset) == 0xFF then
+            if emptyByteCount == length + 2*surroundingBlankSpace then
+                return offset - emptyByteCount + surroundingBlankSpace
+            end
+            emptyByteCount = emptyByteCount + 1
+            offset = offset + 1
+        else
+            emptyByteCount = 0
+            offset = offset + 4-(offset%4)
+        end
+    end
+    print('no empty space found!')
+end
+
 function battleStarting()
     battleType = memory.readbyte(battleTypePointer)
-    if battleType ~= currentBattleType and currentBattleType == 0 or currentBattleType == 8 then
+    if (battleType ~= currentBattleType and battleType ~= 28) and (currentBattleType == 0 or currentBattleType == 8) then
         currentBattleType = battleType
         return true
     end

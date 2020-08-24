@@ -18,7 +18,7 @@ function runBot() {
 
 function runBotWithEmotes(emotes) {
     const emulatorPipe = setupEmulatorPipe();
-    emulatorPipe.sendEmote();
+
     const options = {
         identity: {
             username: document.getElementById('botName').value,
@@ -40,7 +40,7 @@ function runBotWithEmotes(emotes) {
         const commandValues = msg.split(" ");
         if (commandValues.length > 0) {
             const commandName = commandValues[0];
-            if (commandName === '!pokemon') {
+            if (commandName === '!pokemon' && context["display-name"] === "DoomInAJar") {
                 handlePokemonCommand(commandValues);
             }
         }
@@ -50,13 +50,13 @@ function runBotWithEmotes(emotes) {
         if (commandValues.length > 1) {
             var emoteParam = commandValues[1];
             var emoteId = emotes[emoteParam]
-            if (emoteParam != null) {
+            if (emoteParam == null) {
                 // TODO: Error handling
             }
             else {
                 const emoteImage = await downloadEmote(emoteId);
                 const emoteImageFormatted = await formatEmote(emoteImage);
-                queueEmote(emoteImageFormatted);
+                emulatorPipe.queueEmote(emoteImageFormatted);
             }
         }
     }
