@@ -35,13 +35,14 @@ async function createPokemon(id, name) {
 	pokemonData.pp4 = movePPs[pokemonData.attack4];
 	pokemonData.ability = randBetween(1, abilityCount);
 	pokemonData.gender = randBetween(0, 2);
-	pokemon.type1 = randBetween(0, Object.keys(types).length);
-	pokemon.type2 = randBetween(0, Object.keys(types).length);
+	pokemonData.type1 = randBetween(0, Object.keys(types).length);
+	pokemonData.type2 = randBetween(0, Object.keys(types).length);
+	pokemonData.name = name
 
 	const movesLearnableCount = randBetween(10, 20);
-	pokemon.movesLearnable = []
+	pokemonData.movesLearnable = []
 	for (let i = 0; i < movesLearnableCount; i++) {
-		pokemon.movesLearnable.push({
+		pokemonData.movesLearnable.push({
 			level: randBetween(1, 60),
 			move: randBetween(1, attackCount)
 		});

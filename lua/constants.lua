@@ -1,4 +1,6 @@
 
+local utils = require 'utils'
+
 local obj={}
 
 obj.chars = {
@@ -102,6 +104,20 @@ obj.substructureOrders = {
     [23] = {M,E,A,G}
 }
 
+function getLevelsToExp()
+    local levelsToExpCsv = {}
+    for line in io.lines('levels.csv') do
+        levelsToExpCsv[#levelsToExpCsv+1] = line
+    end
+    local ret = {}
+    for i=2,#levelsToExpCsv do
+        ret[#ret+1] = utils.parseCSVLine(levelsToExpCsv[i], ",")
+    end
+    return ret
+end
+
+obj.levelsToExp = getLevelsToExp()
+
 obj.fileName = '\\\\.\\pipe\\doomred'
 
 obj.battleTypes = {
@@ -113,6 +129,7 @@ obj.battleTypes = {
 obj.pokemonNameLength = 10
 obj.pokemonNameSize = 10
 obj.substructureSize = 12
+obj.baseStatsSize = 28
 
 -- pointer offsets
 obj.otIdOffset = 4
@@ -122,12 +139,13 @@ obj.checksumOffset = 28
 obj.pokemonNicknameOffset = 8
 
 -- pointers
+-- ROM
+obj.romStartAddress = 0x08000000
+obj.romEndAddress = 0x09FC03FF
+obj.surroundingBlankSpace = 0
+
 obj.pokemonNamesPointer = 0x08245F50
 obj.wildPokemonBattleFunction = 0x08010672
-obj.enemyPokemonPointers = {
-    0x0202402C, 0x02024090, 0x020240F4, 0x02024158, 0x020241BC, 0x02024220
-}
-obj.pokemonNicknameOffset = 8
 obj.baseStatsPointer = 0x08254810
 obj.movesetPointers = 0x0825D824
 obj.frontSpritePointer = 0x0823511C
@@ -135,8 +153,10 @@ obj.backSpritePointer = 0x082365BC
 obj.palettePointer = 0x0823737C
 obj.iconPointers = 0x083D3810
 
-obj.romStartAddress = 0x08000000
-obj.romEndAddress = 0x09FC03FF
-obj.surroundingBlankSpace = 0
+-- RAM
+obj.battleTypePointer = 0x02022B4C
+obj.enemyPokemonPointers = {
+    0x0202402C, 0x02024090, 0x020240F4, 0x02024158, 0x020241BC, 0x02024220
+}
 
 return obj

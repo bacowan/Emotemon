@@ -22,6 +22,16 @@ function getPokemonCount()
     return 6
 end
 
+function tablesEqual(t1,t2)
+    if (#t1~=#t2) then return false end
+    for i=1,#t1 do
+        if (t1[i] ~= t2[i]) then
+            return false
+        end
+    end
+    return true
+end
+
 function overwritePokemon(pokemonPointer)
 
     local rawData = readPipe()
@@ -42,7 +52,7 @@ function overwritePokemon(pokemonPointer)
     substructureUtils.convertSubstructures(newPokemonData, nextPokemonId, level, levelUpType, growth, attacks, ev, misc)
     
     -- write the encrypted data
-    local encryptedData, checksum = substructureUtils.encrypt(substructureOrder, growth, attacks, ev, misc)
+    local encryptedData, checksum = substructureUtils.encrypt(substructureOrder, growth, attacks, ev, misc, encryptionKey)
     for i=1,4 do
         for j=1,#encryptedData[i] do
             memory.writebyte(pokemonPointer + constants.dataStructureOffset + (i-1)*constants.substructureSize + (j-1), encryptedData[i][j])
@@ -58,7 +68,7 @@ function overwritePokemon(pokemonPointer)
     
     -- Write the species name
     for i=1,#newPokemonData.name do
-        memory.writebyte(constants.pokemonNamesPointer + (constants.pokemonNameSize+1)*nextPokemonId + i-1, constants.chars[string.upper(constants.name:sub(i,i))])
+        memory.writebyte(constants.pokemonNamesPointer + (constants.pokemonNameSize+1)*nextPokemonId + i-1, constants.chars[string.upper(newPokemonData.name:sub(i,i))])
     end
     memory.writebyte(constants.pokemonNamesPointer + (constants.pokemonNameSize+1)*nextPokemonId + #newPokemonData.name, 0xFF)
     
@@ -91,7 +101,7 @@ function overwritePokemon(pokemonPointer)
     
     -- write the image
     local baseImageAddress = findEmptySpace(#newPokemonData.emotePixels)
-    for i=1,#newPokemonData.image do
+    for i=1,#newPokemonData.emotePixels do
         memory.writebyte(baseImageAddress+i-1, newPokemonData.emotePixels[i])
     end
     memory.writedword(constants.frontSpritePointer+nextPokemonId*8, baseImageAddress)

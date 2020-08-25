@@ -1,4 +1,5 @@
 local constants = require 'constants'
+local utils = require 'utils'
 
 local M = {}
 
@@ -19,14 +20,14 @@ function decrypt(pokemonPointer, encryptionKey, substructureOrder)
     -- decrypt the data
     local decryptedData = {}
     for i=1,4 do
-        decryptedData[i] = xor(encryptedData[i], encryptionKey)
+        decryptedData[i] = utils.xor(encryptedData[i], encryptionKey)
     end
     
     -- organize the data
-    local growth = decryptedData[indexOf(substructureOrder,constants.G)]
-    local attacks = decryptedData[indexOf(substructureOrder,constants.A)]
-    local ev = decryptedData[indexOf(substructureOrder,constants.E)]
-    local misc = decryptedData[indexOf(substructureOrder,constants.M)]
+    local growth = decryptedData[utils.indexOf(substructureOrder,constants.G)]
+    local attacks = decryptedData[utils.indexOf(substructureOrder,constants.A)]
+    local ev = decryptedData[utils.indexOf(substructureOrder,constants.E)]
+    local misc = decryptedData[utils.indexOf(substructureOrder,constants.M)]
     
     return growth, attacks, ev, misc
 end
@@ -53,7 +54,7 @@ function convertSubstructures(input, pokemonId, level, levelUpType, growth, atta
     growth[2] = bit.rshift(pokemonId, 8)
     
     -- overwrite the exp.
-    local exp = levelsToExp[level][levelUpType+2]
+    local exp = constants.levelsToExp[level][levelUpType+2]
     growth[5] = bit.band(exp, 0xFF)
     growth[6] = bit.band(bit.rshift(exp,8),0xFF)
     growth[7] = bit.band(bit.rshift(exp,16),0xFF)
@@ -80,13 +81,13 @@ function convertBaseStats(input, baseStats)
     baseStats[17] = input.gender
 end
 
-function encrypt(substructureOrder, growth, attacks, ev, misc)
+function encrypt(substructureOrder, growth, attacks, ev, misc, encryptionKey)
     -- create new data to write
     local newUnencryptedData = {}
-    newUnencryptedData[indexOf(substructureOrder,constants.G)] = growth
-    newUnencryptedData[indexOf(substructureOrder,constants.A)] = attacks
-    newUnencryptedData[indexOf(substructureOrder,constants.E)] = ev
-    newUnencryptedData[indexOf(substructureOrder,constants.M)] = misc
+    newUnencryptedData[utils.indexOf(substructureOrder,constants.G)] = growth
+    newUnencryptedData[utils.indexOf(substructureOrder,constants.A)] = attacks
+    newUnencryptedData[utils.indexOf(substructureOrder,constants.E)] = ev
+    newUnencryptedData[utils.indexOf(substructureOrder,constants.M)] = misc
     
     -- calculate the checksum
     local checksum = calculateChecksum(newUnencryptedData)
@@ -94,7 +95,7 @@ function encrypt(substructureOrder, growth, attacks, ev, misc)
     -- re-encrypt the data
     local newEncryptedData = {}
     for i=1,4 do
-        newEncryptedData[i] = xor(newUnencryptedData[i], encryptionKey)
+        newEncryptedData[i] = utils.xor(newUnencryptedData[i], encryptionKey)
     end
 
     return newEncryptedData, checksum
@@ -104,7 +105,8 @@ M.getEncryptionKey = getEncryptionKey
 M.getSubstructureOrder = getSubstructureOrder
 M.convertSubstructures = convertSubstructures
 M.calculateChecksum = calculateChecksum
-M.encrypt = encryptedData
+M.encrypt = encrypt
+M.decrypt = decrypt
 M.convertBaseStats = convertBaseStats
 
 return M

@@ -8,9 +8,11 @@ function setupEmulatorPipe() {
         let emoteText;
         if (emoteQueue.length > 0) {
             emoteText = emoteQueue.shift();
+            console.log("writing emote");
         }
         else {
             emoteText = "\r\n";
+            console.log("writing blank text");
         }
         c.write(emoteText);
     });

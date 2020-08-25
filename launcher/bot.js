@@ -17,6 +17,7 @@ function runBot() {
 }
 
 function runBotWithEmotes(emotes) {
+    console.log('connecting');
     const emulatorPipe = setupEmulatorPipe();
 
     const options = {
@@ -52,8 +53,10 @@ function runBotWithEmotes(emotes) {
             var emoteId = emotes[emoteParam]
             if (emoteParam == null) {
                 // TODO: Error handling
+                console.log("could not find emote: " + emoteParam);
             }
             else {
+                console.log("got emote: " + emoteParam);
                 const newPokemon = await createPokemon(emoteId, emoteParam)
                 emulatorPipe.queueEmote(newPokemon);
             }
