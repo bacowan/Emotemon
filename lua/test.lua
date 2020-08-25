@@ -1,6 +1,6 @@
 local wildPokemonBattleFunction = 0x08010672
 local bulbasaurPalettePointer = 0x08237384
-local bulbasaurSpritePointer = 0x08235124
+local bulbasaurSpritePointer = 0x082365C4
 local bulbasaurPalette = 0x08EC24B0--0x08D2FE78
 local bulbasaurSprite = 0x08FBD6A0--0x08D305AC
 local battleTypePointer = 0x02022B4C

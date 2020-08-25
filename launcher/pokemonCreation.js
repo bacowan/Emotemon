@@ -16,11 +16,11 @@ async function downloadEmote(emoteId) {
     }
 }
 
-async function formatEmote(rawImage) {
+async function formatEmote(name, rawImage) {
 	const { pixels, palette } = await quantize(rawImage);
 	const compressedPixels = compress(pixels);
 	const compressedPalette = compress(palette);
-	return formatAsString(compressedPixels, compressedPalette);
+	return formatAsString(name, compressedPixels, compressedPalette);
 }
 
 async function quantize(image) {

@@ -55,7 +55,7 @@ function runBotWithEmotes(emotes) {
             }
             else {
                 const emoteImage = await downloadEmote(emoteId);
-                const emoteImageFormatted = await formatEmote(emoteImage);
+                const emoteImageFormatted = await formatEmote(emoteParam, emoteImage);
                 emulatorPipe.queueEmote(emoteImageFormatted);
             }
         }
