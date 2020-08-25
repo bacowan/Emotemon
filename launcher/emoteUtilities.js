@@ -26,8 +26,8 @@ async function formatEmote(rawImage) {
 async function quantize(image) {
 	const targetColors = 16;
 	const resizedImage = await resizeImg(Buffer.from(image), {
-		width: 32,
-		height: 32
+		width: 64,
+		height: 64
 	});
 
 	var { data, width, height } = png.PNG.sync.read(resizedImage);
@@ -55,23 +55,39 @@ async function quantize(image) {
 		]
 	}).flat();
 
-	const formattedPixels = [];
-	for (let i = 0; i < resultPointContainer._pointArray.length; i += 2) {
-		formattedPixels.push(
-			pixelFromPalette(resultPointContainer._pointArray[i])
-			+ pixelFromPalette(resultPointContainer._pointArray[i+1]) << 8);
-	}
-
-	function pixelFromPalette(pixel) {
-		if (pixel.a === 0) {
+	const palettedPixels = resultPointContainer._pointArray.map(p => {
+		if (p.a === 0) {
 			return 0;
 		}
 		else {
-			return paletteIndexes[pixel.uint32];
+			return paletteIndexes[p.uint32];
+		}
+	});
+
+	// tile
+	const tiled = [];
+	const tileSize = 8;
+	const horizontalTileCount = width / 8;
+	const verticalTileCount = height / 8;
+	for (let i = 0; i < horizontalTileCount; i++) {
+		for (let j = 0; j < verticalTileCount; j++) {
+			for (let k = 0; k < tileSize * tileSize; k++) {
+				tiled.push(palettedPixels[Math.floor(
+					i * width * tileSize // for each vertical tile
+					+ j * tileSize // for each horizontal tile
+					+ k % tileSize // for each horizontal pixel in each tile
+					+ Math.floor(k/tileSize) * height // for each vertical pixel in each tile
+				)]);
+			}
 		}
 	}
 
-	return { pixels: formattedPixels, palette: formattedPalette };
+	const tiledAsBytes = [];
+	for (let i = 0; i < tiled.length; i += 2) {
+		tiledAsBytes.push(tiled[i] + (tiled[i + 1] << 4));
+	}
+
+	return { pixels: tiledAsBytes, palette: formattedPalette };
 }
 
 function formatAsString(pixels, palette) {
