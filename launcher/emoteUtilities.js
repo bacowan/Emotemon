@@ -6,7 +6,7 @@ const emoteUrlTop = "https://static-cdn.jtvnw.net/emoticons/v1";
 const emoteSize = "2.0";
 
 async function downloadEmote(emoteId) {
-    const fullEmoteUrl = emoteUrlTop + "/" + emoteId + "/" + emoteSize;
+	const fullEmoteUrl = emoteUrlTop + "/" + emoteId + "/" + emoteSize;
     const response = await fetch(fullEmoteUrl);
     if (response.ok) {
         return await response.arrayBuffer();
@@ -39,7 +39,7 @@ async function quantize(image) {
 	var imageQuantizer = new imageq.image.NearestColor(distanceCalculator);
 	var resultPointContainer = imageQuantizer.quantizeSync(pointContainer, palette);
 
-	const sortedPalette = palette._pointArray.sort((a,b) => b.a - a.a); // Sort by the alpha value so that full alpha ends up in position 0
+	const sortedPalette = palette._pointArray.sort((a,b) => a.a - b.a); // Sort by the alpha value so that full alpha ends up in position 0
 	
 	const paletteIndexes = Object.fromEntries(
 		sortedPalette.map((point, index) => [point.uint32, index])
@@ -48,21 +48,28 @@ async function quantize(image) {
 	const formattedPalette = sortedPalette.map(i => {
 		const val = (i.r >> 3) +
 			((i.g >> 3) << 5) +
-			((i.b >> 3) << 5);
+			((i.b >> 3) << 10);
 		return [
-			val >> 8,
-			val % 0x100
+			val % 0x100,
+			val >> 8
 		]
 	}).flat();
-	
-	const formattedPixels = resultPointContainer._pointArray.map(p => {
-		if (p.a === 255) {
+
+	const formattedPixels = [];
+	for (let i = 0; i < resultPointContainer._pointArray.length; i += 2) {
+		formattedPixels.push(
+			pixelFromPalette(resultPointContainer._pointArray[i])
+			+ pixelFromPalette(resultPointContainer._pointArray[i+1]) << 8);
+	}
+
+	function pixelFromPalette(pixel) {
+		if (pixel.a === 0) {
 			return 0;
 		}
 		else {
-			return paletteIndexes[p.uint32];
+			return paletteIndexes[pixel.uint32];
 		}
-	});
+	}
 
 	return { pixels: formattedPixels, palette: formattedPalette };
 }
@@ -73,7 +80,7 @@ function formatAsString(pixels, palette) {
 }
 
 function testLszz() {
-    const palette = [0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f];
+    const palette = [0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00];
     const compressedPalette = compress(palette);
     console.log(output.map(o => o.toString(16).padStart(2, '0')).join(' '));
 }

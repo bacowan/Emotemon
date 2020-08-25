@@ -1,7 +1,8 @@
 local wildPokemonBattleFunction = 0x08010672
 local bulbasaurPalettePointer = 0x08237384
+local bulbasaurSpritePointer = 0x08235124
 local bulbasaurPalette = 0x08EC24B0--0x08D2FE78
-local bulbasaurSprite = 0x08D305AC
+local bulbasaurSprite = 0x08FBD6A0--0x08D305AC
 local battleTypePointer = 0x02022B4C
 local romStartAddress = 0x08000000
 local romEndAddress = 0x09FC03FF
@@ -37,13 +38,18 @@ function run()
     memory.writebyte(bulbasaurPalettePointer+2, 0xEC)
     memory.writebyte(bulbasaurPalettePointer+3, 0x08)
 
+    memory.writebyte(bulbasaurSpritePointer, 0xA0)
+    memory.writebyte(bulbasaurSpritePointer+1, 0xD6)
+    memory.writebyte(bulbasaurSpritePointer+2, 0xFB)
+    memory.writebyte(bulbasaurSpritePointer+3, 0x08)
+
     for i=1,#emotePaletteByteArray do
         memory.writebyte(bulbasaurPalette+i-1, emotePaletteByteArray[i])
     end
 
-    --for i=1,#emotePixelsByteArray do
-    --    memory.writebyte(bulbasaurSprite+i-1, emotePixelsByteArray[i])
-    --end
+    for i=1,#emotePixelsByteArray do
+        memory.writebyte(bulbasaurSprite+i-1, emotePixelsByteArray[i])
+    end
     
 end
 
