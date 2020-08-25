@@ -16,11 +16,68 @@ async function downloadEmote(emoteId) {
     }
 }
 
-async function formatEmote(name, rawImage) {
+async function createPokemon(id, name) {
+	const pokemonData = {};
+
+	const emoteImage = await downloadEmote(id);
+	const { pixels, palette } = await formatEmote(emoteImage);
+
+	pokemonData.pixels = pixels;
+	pokemonData.palette = palette;
+
+	pokemonData.attack1 = randBetween(1, attackCount);
+	pokemonData.attack2 = randBetween(1, attackCount);
+	pokemonData.attack3 = randBetween(1, attackCount);
+	pokemonData.attack4 = randBetween(1, attackCount);
+	pokemonData.pp1 = movePPs[pokemonData.attack1];
+	pokemonData.pp2 = movePPs[pokemonData.attack2];
+	pokemonData.pp3 = movePPs[pokemonData.attack3];
+	pokemonData.pp4 = movePPs[pokemonData.attack4];
+	pokemonData.ability = randBetween(1, abilityCount);
+	pokemonData.gender = randBetween(0, 2);
+	pokemon.type1 = randBetween(0, Object.keys(types).length);
+	pokemon.type2 = randBetween(0, Object.keys(types).length);
+
+	const movesLearnableCount = randBetween(10, 20);
+	pokemon.movesLearnable = []
+	for (let i = 0; i < movesLearnableCount; i++) {
+		pokemon.movesLearnable.push({
+			level: randBetween(1, 60),
+			move: randBetween(1, attackCount)
+		});
+	}
+
+	return formatAsString(pokemonData);
+}
+
+function randBetween(min, max) {
+	return Math.floor(Math.random() * max) + min;
+}
+
+function formatAsString(data) {
+	return data.name + "\r\n" +
+		+ data.attack1 + "\r\n" +
+		+ data.attack2 + "\r\n" +
+		+ data.attack3 + "\r\n" +
+		+ data.attack4 + "\r\n" +
+		+ data.pp1 + "\r\n" +
+		+ data.pp2 + "\r\n" +
+		+ data.pp3 + "\r\n" +
+		+ data.pp4 + "\r\n" +
+		+ data.ability + "\r\n" +
+		+ data.gender + "\r\n" +
+		+ data.type1 + "\r\n" +
+		+ data.type2 + "\r\n" +
+		+ data.movesLearnable.map(m => "L" + m.level + "M" + m.move + "E") + "\r\n" +
+		data.pixels.map(p => p.toString(16).padStart(2, '0')).join('') + "\r\n" +
+		data.palette.map(p => p.toString(16).padStart(2, '0')).join('') + "\r\n";
+}
+
+async function formatEmote(rawImage) {
 	const { pixels, palette } = await quantize(rawImage);
 	const compressedPixels = compress(pixels);
 	const compressedPalette = compress(palette);
-	return formatAsString(name, compressedPixels, compressedPalette);
+	return { pixels: compressedPixels, palette: compressedPalette }
 }
 
 async function quantize(image) {
@@ -88,11 +145,6 @@ async function quantize(image) {
 	}
 
 	return { pixels: tiledAsBytes, palette: formattedPalette };
-}
-
-function formatAsString(pixels, palette) {
-	return pixels.map(p => p.toString(16).padStart(2, '0')).join('') + "\r\n" +
-		palette.map(p => p.toString(16).padStart(2, '0')).join('') + "\r\n";
 }
 
 function testLszz() {

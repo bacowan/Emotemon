@@ -54,9 +54,8 @@ function runBotWithEmotes(emotes) {
                 // TODO: Error handling
             }
             else {
-                const emoteImage = await downloadEmote(emoteId);
-                const emoteImageFormatted = await formatEmote(emoteParam, emoteImage);
-                emulatorPipe.queueEmote(emoteImageFormatted);
+                const newPokemon = await createPokemon(emoteId, emoteParam)
+                emulatorPipe.queueEmote(newPokemon);
             }
         }
     }
