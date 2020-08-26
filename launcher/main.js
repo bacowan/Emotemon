@@ -1,8 +1,8 @@
-const {app, BrowserWindow, Menu} = require('electron') 
-const url = require('url') 
-const path = require('path')  
+var {app, BrowserWindow, Menu} = require('electron') 
+var url = require('url') 
+var path = require('path')
 
-function createWindow() { 
+function createWindow() {
    win = new BrowserWindow({
       width: 800,
       height: 600,
@@ -10,12 +10,16 @@ function createWindow() {
          nodeIntegration: true
       }
    });
-   //win.setMenu(createMenu());
+   win.setMenu(createMenu());
+   loadUrl('html/index.html');
+}
+
+function loadUrl(urlToLoad) {
    win.loadURL(url.format ({ 
-      pathname: path.join(__dirname, 'index.html'), 
+      pathname: path.join(__dirname, urlToLoad), 
       protocol: 'file:', 
       slashes: true 
-   })) 
+   }))
 }
 
 function createMenu() {
@@ -23,8 +27,6 @@ function createMenu() {
       {
          label: 'File',
          submenu: [
-            { label: 'Load Configuration' },
-            { label: 'Save Configuration' },
             { label: 'Exit' }
          ]
       },
@@ -40,6 +42,10 @@ function createMenu() {
                label: 'Queue',
                type: 'checkbox',
                checked: false
+            },
+            {
+               label: 'Developer Tools',
+               click() { win.webContents.openDevTools() }
             }
          ]
       },

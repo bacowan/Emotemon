@@ -1,5 +1,5 @@
-const net = require('net');
-const path = require('path');
+var net = require('net');
+var path = require('path');
 
 function setupEmulatorPipe() {
     const emoteQueue = [];

@@ -1,11 +1,11 @@
-const tmi = require('tmi.js');
+var tmi = require('tmi.js');
 
 function runBotSubmit() {
     runBot();
     return false;
 }
 
-function runBot() {
+async function runBot() {
     const emoteJson = fs.readFile(emoteCacheFileName, (err, data) => {
         if (err != null) {
             // TODO: Error handling

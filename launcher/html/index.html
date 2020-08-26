@@ -5,8 +5,17 @@
 		<title>DoomRed</title>
         <link rel="stylesheet" type="text/css" href="./styles.css"/>
         <script src="../javascript/index.js"></script>
-    </head>
-    <body>
+        <script src="../javascript/bot.js"></script>
+        <script src="../javascript/emoteCache.js"></script>
+        <script src="../javascript/emoteQueue.js"></script>
+        <script src="../javascript/pokemonCreation.js"></script>
+        <script src="../javascript/pokemonData.js"></script>
+        <script src="../javascript/lzss/lzss.js"></script>
+	</head>
 
-    </body>
+    <body onload="onLoad()">
+        <h1 class="column-full">Doom Red</h1>
+        <button onclick="configure()">Configure</button>
+		<button onclick="runBot()">Run Bot</button>
+	</body>
 </html>

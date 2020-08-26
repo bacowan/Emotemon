@@ -7,3 +7,7 @@
     width: 50%;
     float: left;
 }
+
+.clickable {
+    cursor: pointer;
+}

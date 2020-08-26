@@ -1,6 +1,6 @@
-const png = require('pngjs');
-const imageq = require('image-q');
-const resizeImg = require('resize-img');
+var png = require('pngjs');
+var imageq = require('image-q');
+var resizeImg = require('resize-img');
 
 const emoteUrlTop = "https://static-cdn.jtvnw.net/emoticons/v1";
 const emoteSize = "2.0";

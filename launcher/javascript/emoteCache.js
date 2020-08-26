@@ -1,4 +1,5 @@
-const fs = require('fs');
+var fs = require('fs');
+
 const clientId = '48jcq0qugs9x7cscqj364iimlpw9gm';
 const emoteCacheFileName = 'emoteCache.json';
 
