@@ -33,7 +33,6 @@ function tablesEqual(t1,t2)
 end
 
 function overwritePokemon(pokemonPointer)
-
     local rawData = readPipe()
     local newPokemonData = formatRawPokemonData(rawData)
     
@@ -112,6 +111,8 @@ function overwritePokemon(pokemonPointer)
     for i=1,#newPokemonData.emotePalette do
         memory.writebyte(basePaletteAddress+i-1, newPokemonData.emotePalette[i])
     end
+
+    nextPokemonId = nextPokemonId + 1
     
     -- write the icon
     --local baseIconAddress = memory.readdword(constants.iconPointers+nextPokemonId*4)
@@ -122,7 +123,7 @@ end
 
 function formatRawPokemonData(rawData)
     local ret = {}
-    ret.name = rawData.name
+    ret.name = rawData.name:sub(0,10)
     ret.attack1 = tonumber(rawData.attack1)
     ret.attack2 = tonumber(rawData.attack2)
     ret.attack3 = tonumber(rawData.attack3)
