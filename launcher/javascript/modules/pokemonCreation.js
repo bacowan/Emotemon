@@ -1,7 +1,7 @@
 const png = require('pngjs');
 const imageq = require('image-q');
 const resizeImg = require('resize-img');
-import { attackCount, abilityCount, types } from './pokemonConstants.js';
+import { attackCount, abilityCount, types, movePPs } from './pokemonConstants.js';
 import { compress } from './lzss/lzss.js';
 
 const emoteUrlTop = "https://static-cdn.jtvnw.net/emoticons/v1";
@@ -21,8 +21,8 @@ async function downloadEmote(emoteId) {
 async function createPokemon(id, name) {
 	const pokemonData = {};
 
-	const emoteImage = await downloadEmote(id);
-	const { pixels, palette } = await formatEmote(emoteImage);
+	pokemonData.emoteImage = await downloadEmote(id);
+	const { pixels, palette } = await formatEmote(pokemonData.emoteImage);
 
 	pokemonData.pixels = pixels;
 	pokemonData.palette = palette;

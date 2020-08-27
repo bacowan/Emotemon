@@ -1,6 +1,7 @@
 const net = require('net');
 const path = require('path');
 import { log, unlogQueueEmote, logQueueEmote } from './logging.js';
+import { formatAsString } from './pokemonCreation.js'
 
 function setupEmulatorPipe() {
     const emoteQueue = [];
@@ -10,7 +11,6 @@ function setupEmulatorPipe() {
         if (emoteQueue.length > 0) {
             emote = emoteQueue.shift();
             unlogQueueEmote(emote);
-            const emoteText = formatAsString(emote);
             log("writing emote");
         }
         else {
@@ -24,7 +24,8 @@ function setupEmulatorPipe() {
     );
 
     return {
-        queueEmote(emoteText) {
+        queueEmote(emote) {
+            const emoteText = formatAsString(emote);
             emoteQueue.push(emoteText);
             logQueueEmote(emote);
         }

@@ -134,7 +134,7 @@ class SlidingWindow {
 function* _compress(input) {
     // Generates a stream of tokens. Either a byte (int) or a tuple of (count,
     // displacement).
-    slidingWindow = new SlidingWindow(input);
+    const slidingWindow = new SlidingWindow(input);
 
     let i = 0;
     while (true) {
@@ -204,12 +204,12 @@ function pack(value, size, littleEndian=false) {
 }
 
 function compress(input) {
-    output = []
+    let output = []
 
     // Header
     // (contains the size of the decompressed data. 4 bytes long, little endian)
     // Note: I'm not sure what the purpose of the 0x10 is (the GBA expects it though)
-    const sizeAsHex = pack((input.length << 8) + 0x10, size=4, littleEndian=true);
+    const sizeAsHex = pack((input.length << 8) + 0x10, 4, true);
     Array.prototype.push.apply(
         output,
         sizeAsHex);
@@ -220,7 +220,7 @@ function compress(input) {
         const flags = tokens.map(t => Array.isArray(t));
         Array.prototype.push.apply(
             output,
-            pack(packflags(flags), size=1));
+            pack(packflags(flags), 1));
 
         for (const t of tokens) {
             if (Array.isArray(t)) {
@@ -230,12 +230,12 @@ function compress(input) {
                 const sh = (count << 12) | disp;
                 Array.prototype.push.apply(
                     output,
-                    pack(sh, size=2));
+                    pack(sh, 2));
             }
             else {
                 Array.prototype.push.apply(
                     output,
-                    pack(t, size=1));
+                    pack(t, 1));
             }
         }
 

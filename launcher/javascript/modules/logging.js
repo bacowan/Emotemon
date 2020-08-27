@@ -6,8 +6,29 @@ function log(string) {
     logDiv.appendChild(li);
 }
 
-function logQueueEmote() {
+function logQueueEmote(pokemon) {
+    const buffer = new Uint8Array(pokemon.emoteImage);
+    const blob = new Blob([buffer], {type: "img/png"});
+    const urlCreator = window.URL || window.webkitURL;
+    const imageUrl = urlCreator.createObjectURL(blob);
 
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.width = "50";
+    img.height = "50";
+
+    const text = document.createElement('p');
+    text.innerHTML = pokemon.name;
+
+    const row = document.createElement('div');
+    row.appendChild(img);
+    row.appendChild(text);
+
+    const li = document.createElement('li');
+    li.appendChild(row);
+
+    const emotesDiv = document.getElementById('emote-queue');
+    emotesDiv.appendChild(li);
 }
 
 function unlogQueueEmote() {
