@@ -1,6 +1,7 @@
-var png = require('pngjs');
-var imageq = require('image-q');
-var resizeImg = require('resize-img');
+const png = require('pngjs');
+const imageq = require('image-q');
+const resizeImg = require('resize-img');
+import { attackCount, abilityCount, types } from './pokemonConstants.js';
 
 const emoteUrlTop = "https://static-cdn.jtvnw.net/emoticons/v1";
 const emoteSize = "2.0";
@@ -47,8 +48,7 @@ async function createPokemon(id, name) {
 			move: randBetween(1, attackCount)
 		});
 	}
-
-	return formatAsString(pokemonData);
+	return pokemonData;
 }
 
 function randBetween(min, max) {
@@ -148,8 +148,4 @@ async function quantize(image) {
 	return { pixels: tiledAsBytes, palette: formattedPalette };
 }
 
-function testLszz() {
-    const palette = [0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00, 0x1f, 0x00];
-    const compressedPalette = compress(palette);
-    console.log(output.map(o => o.toString(16).padStart(2, '0')).join(' '));
-}
+export { downloadEmote, createPokemon, formatAsString }

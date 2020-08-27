@@ -1,32 +1,59 @@
-var tmi = require('tmi.js');
+const remote = require('electron').remote;
+const tmi = require('tmi.js');
+const fs = require('fs');
+const url = require('url');
+const path = require('path');
+const BrowserWindow = require('electron').remote.BrowserWindow; 
+import { settingsFileName, emoteCacheFileName } from './constants.js';
+import { log } from './logging.js';
+import { setupEmulatorPipe } from './emoteQueue.js';
+import { createPokemon } from './pokemonCreation.js';
 
-function runBotSubmit() {
-    runBot();
-    return false;
-}
+const app = remote.app;
+const appDataPath = app.getPath('userData');
 
 async function runBot() {
-    const emoteJson = fs.readFile(emoteCacheFileName, (err, data) => {
-        if (err != null) {
-            // TODO: Error handling
-        }
-        else {
-            runBotWithEmotes(JSON.parse(data));
-        }
-    });
+    try {
+        const fullEmoteCachePath = path.join(appDataPath, emoteCacheFileName);
+        const data = await fs.promises.readFile(fullEmoteCachePath);
+        // TODO: Error handling
+        const configuration = await loadConfiguration();
+    
+        runBotWithConfiguration(JSON.parse(data), configuration);
+    }
+    catch(err) {
+        log("Failed to load emote cache. Please ensure that it is up to date.");
+    }
 }
 
-function runBotWithEmotes(emotes) {
-    console.log('connecting');
+async function loadConfiguration() {
+    try {
+        const configurationFilePath = path.join(appDataPath, settingsFileName);
+        await fs.promises.access(configurationFilePath);
+        const configurationText = await fs.promises.readFile(configurationFilePath);
+        const configuration = JSON.parse(configurationText);
+        return {
+            botName: configuration.botName,
+            oauth: configuration.oauth,
+            channel: configuration.channel
+        }
+    }
+    catch(err) {
+        // TODO: Error handling
+    }
+}
+
+function runBotWithConfiguration(emotes, configuration) {
+    log('connecting');
     const emulatorPipe = setupEmulatorPipe();
 
     const options = {
         identity: {
-            username: document.getElementById('botName').value,
-            password: document.getElementById('oauth').value
+            username: configuration.botName,
+            password: configuration.oauth
         },
         channels: [
-            document.getElementById('channel').value
+            configuration.channel
         ]
     }
 
@@ -53,17 +80,44 @@ function runBotWithEmotes(emotes) {
             var emoteId = emotes[emoteParam]
             if (emoteParam == null) {
                 // TODO: Error handling
-                console.log("could not find emote: " + emoteParam);
+                log("could not find emote: " + emoteParam);
             }
             else {
-                console.log("got emote: " + emoteParam);
+                log("got emote: " + emoteParam);
                 const newPokemon = await createPokemon(emoteId, emoteParam)
+
                 emulatorPipe.queueEmote(newPokemon);
             }
         }
     }
 
     function onConnected (addr, port) {
-        console.log('connected');
+        log('connected');
     }
 }
+
+function configure() {
+    const win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+           nodeIntegration: true
+        }
+     });
+     //win.setMenu(null);
+     win.loadURL(url.format ({ 
+        pathname: path.join(__dirname, 'configuration.html'), 
+        protocol: 'file:', 
+        slashes: true 
+     }));
+}
+
+function stop() {
+    window.location.href = 'index.html';
+}
+
+function restart() {
+    window.location.reload();
+}
+
+export { runBot, configure, stop, restart }

@@ -374,4 +374,6 @@ const movePPs = Object.freeze({
     352: 20,
     353: 5,
     354: 5,
-})
+});
+
+export { attackCount, abilityCount, types, movePPs }

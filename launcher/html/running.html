@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset = "UTF-8">
+        <title>DoomRed</title>
+        <script type="module" src="../javascript/bot.js"></script>
+        <link rel="stylesheet" type="text/css" href="./styles.css"/>
+	</head>
+    <body>
+        <div class="dashboard-container">
+            <div class="row dash-logs">
+				<div>
+					<h1>Emote Queue (next emote on top)</h1>
+					<ul id="emote-queue">
+						
+					</ul>
+				</div>
+				<div>
+					<h1>Logs</h1>
+					<ul id="logs">
+		
+					</ul>
+				</div>
+            </div>
+            <div class="dash-bar">
+                <button id="stop">Stop</button>
+                <button id="restart">Restart</button>
+                <button id="configure">Configuration</button>
+            </div>
+        </div>
+        
+        <script type="module">
+            import { runBot, configure, stop, restart } from '../javascript/bot.js'
+            document.getElementById('stop').addEventListener('click', stop);
+            document.getElementById('restart').addEventListener('click', restart);
+            document.getElementById('configure').addEventListener('click', configure);
+            runBot();
+        </script>
+	</body>
+</html>

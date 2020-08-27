@@ -4,10 +4,9 @@
 		<meta charset = "UTF-8">
 		<title>DoomRed</title>
         <link rel="stylesheet" type="text/css" href="./styles.css"/>
-        <script src="../javascript/configuration.js"></script>
-        <script src="../javascript/constants.js"></script>
+        <script type="module" src="../javascript/configuration.js"></script>
     </head>
-    <body onload="onConfigurationPageLoad()">
+    <body>
         <h1>Configuration</h1>
         <h2>Basic</h2>
         <label>Bot Name</label>
@@ -21,13 +20,21 @@
 	    <br>
         <p>lua script path: </p><p id="luaScriptPath">a</p>
         <p>emote cache last updated: </p><p id="emoteCacheLastUpdate">b</p>
-        <button onclick="updateEmoteCache()">Update emote cache</button>
-        <h2 id="advancedHeader" onclick="onAdvancedClicked()" class="clickable">
+        <button id="updateEmoteCache">Update emote cache</button>
+        <h2 id="advancedHeader" class="clickable">
             Advanced ▶
         </h2>
         <div id="advancedDiv" style="display: none;">
             <p>some stuff</p>
         </div>
-        <button onclick="save()">Save</button>
+        <button id="save">Save</button>
+
+        <script type="module">
+            import { updateEmoteCache, onAdvancedClicked, save, onConfigurationPageLoad } from '../javascript/configuration.js'
+            document.getElementById('updateEmoteCache').addEventListener('click', updateEmoteCache);
+            document.getElementById('advancedHeader').addEventListener('click', onAdvancedClicked);
+            document.getElementById('save').addEventListener('click', save);
+            onConfigurationPageLoad();
+        </script>
     </body>
 </html>

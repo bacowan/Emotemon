@@ -1,7 +1,12 @@
-var fs = require('fs');
+const remote = require('electron').remote;
+const fs = require('fs');
+const path = require('path');
+import { emoteCacheFileName } from './constants.js';
 
 const clientId = '48jcq0qugs9x7cscqj364iimlpw9gm';
-const emoteCacheFileName = 'emoteCache.json';
+
+const app = remote.app;
+const appDataPath = app.getPath('userData');
 
 async function updateEmoteCache() {
     // TODO: show user that load is happening/done.
@@ -15,7 +20,8 @@ async function updateEmoteCache() {
     if (response.ok) {
         const emotes = JSON.stringify(
             parseDownloadedEmotes(await response.json()));
-        const test = await fs.promises.writeFile(emoteCacheFileName, emotes);
+        const fullEmoteCachePath = path.join(appDataPath, emoteCacheFileName);
+        await fs.promises.writeFile(fullEmoteCachePath, emotes);
         updateCacheLastUpdatedText();
     }
     else {
@@ -30,12 +36,9 @@ async function updateEmoteCache() {
     }
 }
 
-function onload() {
-    updateCacheLastUpdatedText();
-}
-
 function updateCacheLastUpdatedText() {
-    fs.stat(emoteCacheFileName, (err, stats) => {
+    const fullEmoteCachePath = path.join(appDataPath, emoteCacheFileName);
+    fs.stat(fullEmoteCachePath, (err, stats) => {
         const emoteCacheText = document.getElementById("emoteCacheLastUpdate");
         if (err != null) {
             emoteCacheText.innerHTML = "never";
@@ -45,3 +48,5 @@ function updateCacheLastUpdatedText() {
         }
     });
 }
+
+export { updateEmoteCache, updateCacheLastUpdatedText }

@@ -1,11 +1,28 @@
-.column-full {
-    width: 100%;
-    float: left;
+html, body {
+    height: 100%;
+    margin: 0;
 }
 
-.column-half {
-    width: 50%;
-    float: left;
+.dashboard-container {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+.dashboard-container > .dash-logs {
+    flex: 1 1 auto;
+}
+
+.dashboard-container > .dash-bar {
+    flex-basis: 3em;
+}
+
+.row {
+    display: flex;
+}
+
+.row > * {
+    flex: 1;
 }
 
 .clickable {

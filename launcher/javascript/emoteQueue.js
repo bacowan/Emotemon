@@ -1,5 +1,6 @@
-var net = require('net');
-var path = require('path');
+const net = require('net');
+const path = require('path');
+import { log, unlogQueueEmote, logQueueEmote } from './logging.js';
 
 function setupEmulatorPipe() {
     const emoteQueue = [];
@@ -7,12 +8,14 @@ function setupEmulatorPipe() {
     const server = net.createServer(c => {
         let emoteText;
         if (emoteQueue.length > 0) {
-            emoteText = emoteQueue.shift();
-            console.log("writing emote");
+            emote = emoteQueue.shift();
+            unlogQueueEmote(emote);
+            const emoteText = formatAsString(emote);
+            log("writing emote");
         }
         else {
             emoteText = "\r\n";
-            console.log("writing blank text");
+            log("writing blank text");
         }
         c.write(emoteText);
     });
@@ -23,6 +26,9 @@ function setupEmulatorPipe() {
     return {
         queueEmote(emoteText) {
             emoteQueue.push(emoteText);
+            logQueueEmote(emote);
         }
     }
 }
+
+export { setupEmulatorPipe }
