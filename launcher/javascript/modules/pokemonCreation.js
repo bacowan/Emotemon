@@ -2,6 +2,7 @@ const png = require('pngjs');
 const imageq = require('image-q');
 const resizeImg = require('resize-img');
 import { attackCount, abilityCount, types } from './pokemonConstants.js';
+import { compress } from './lzss/lzss.js';
 
 const emoteUrlTop = "https://static-cdn.jtvnw.net/emoticons/v1";
 const emoteSize = "2.0";

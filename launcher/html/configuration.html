@@ -4,7 +4,6 @@
 		<meta charset = "UTF-8">
 		<title>DoomRed</title>
         <link rel="stylesheet" type="text/css" href="./styles.css"/>
-        <script type="module" src="../javascript/configuration.js"></script>
     </head>
     <body>
         <h1>Configuration</h1>
@@ -18,8 +17,8 @@
         <label>Channel</label>
 		<input type="text" id="channel" name="channel"/>
 	    <br>
-        <p>lua script path: </p><p id="luaScriptPath">a</p>
-        <p>emote cache last updated: </p><p id="emoteCacheLastUpdate">b</p>
+        <p>lua script path: </p><p id="luaScriptPath">...</p>
+        <p>emote cache last updated: </p><p id="emoteCacheLastUpdate">...</p>
         <button id="updateEmoteCache">Update emote cache</button>
         <h2 id="advancedHeader" class="clickable">
             Advanced ▶
@@ -30,7 +29,7 @@
         <button id="save">Save</button>
 
         <script type="module">
-            import { updateEmoteCache, onAdvancedClicked, save, onConfigurationPageLoad } from '../javascript/configuration.js'
+            import { updateEmoteCache, onAdvancedClicked, save, onConfigurationPageLoad } from '../javascript/topPages/configuration.js'
             document.getElementById('updateEmoteCache').addEventListener('click', updateEmoteCache);
             document.getElementById('advancedHeader').addEventListener('click', onAdvancedClicked);
             document.getElementById('save').addEventListener('click', save);

@@ -1,8 +1,8 @@
 const remote = require('electron').remote;
 const fs = require('fs');
 const path = require('path');
-import { settingsFileName } from './constants.js';
-import { updateEmoteCache, updateCacheLastUpdatedText } from './emoteCache.js';
+import { settingsFileName } from '../modules/constants.js';
+import { updateEmoteCache as updateEmoteCacheDontWrite, getCacheLastUpdated } from '../modules/emoteCache.js';
 
 const app = remote.app;
 const appDataPath = app.getPath('userData');
@@ -16,7 +16,7 @@ async function onConfigurationPageLoad() {
         document.getElementById('botName').value = configuration.botName;
         document.getElementById('oauth').value = configuration.oauth;
         document.getElementById('channel').value = configuration.channel;
-        updateCacheLastUpdatedText();
+        await updateEmoteCacheText();
     }
     catch(err) {
     }
@@ -44,6 +44,16 @@ async function save() {
         channel: document.getElementById('channel').value
     };
     await fs.promises.writeFile(configurationFilePath, JSON.stringify(configuration));
+}
+
+async function updateEmoteCache() {
+    await updateEmoteCacheDontWrite();
+    await updateEmoteCacheText();
+}
+
+async function updateEmoteCacheText() {
+    const cacheLastUpdated = await getCacheLastUpdated();
+    document.getElementById("emoteCacheLastUpdate").innerHTML = cacheLastUpdated.toLocaleString();
 }
 
 export { onConfigurationPageLoad, save, onAdvancedClicked, updateEmoteCache }

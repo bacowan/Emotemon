@@ -1,7 +1,8 @@
 function log(string) {
+    const time = new Date();
     const logDiv = document.getElementById('logs');
     const li = document.createElement('li');
-    li.innerHTML = string;
+    li.innerHTML = time.toLocaleTimeString() + ": " + string;
     logDiv.appendChild(li);
 }
 

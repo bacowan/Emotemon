@@ -253,3 +253,5 @@ function compress(input) {
 
     return output;
 }
+
+export { compress }

@@ -22,7 +22,6 @@ async function updateEmoteCache() {
             parseDownloadedEmotes(await response.json()));
         const fullEmoteCachePath = path.join(appDataPath, emoteCacheFileName);
         await fs.promises.writeFile(fullEmoteCachePath, emotes);
-        updateCacheLastUpdatedText();
     }
     else {
         // TODO: Error handling
@@ -36,17 +35,15 @@ async function updateEmoteCache() {
     }
 }
 
-function updateCacheLastUpdatedText() {
+async function getCacheLastUpdated() {
     const fullEmoteCachePath = path.join(appDataPath, emoteCacheFileName);
-    fs.stat(fullEmoteCachePath, (err, stats) => {
-        const emoteCacheText = document.getElementById("emoteCacheLastUpdate");
-        if (err != null) {
-            emoteCacheText.innerHTML = "never";
-        }
-        else {
-            emoteCacheText.innerHTML = stats.mtime;
-        }
-    });
+    try {
+        const stats = await fs.promises.stat(fullEmoteCachePath);
+        return stats.mtime;
+    }
+    catch(err) {
+        return "never";
+    }
 }
 
-export { updateEmoteCache, updateCacheLastUpdatedText }
+export { updateEmoteCache, getCacheLastUpdated }

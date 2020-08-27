@@ -4,16 +4,17 @@ const fs = require('fs');
 const url = require('url');
 const path = require('path');
 const BrowserWindow = require('electron').remote.BrowserWindow; 
-import { settingsFileName, emoteCacheFileName } from './constants.js';
-import { log } from './logging.js';
-import { setupEmulatorPipe } from './emoteQueue.js';
-import { createPokemon } from './pokemonCreation.js';
+import { settingsFileName, emoteCacheFileName } from '../modules/constants.js';
+import { log } from '../modules/logging.js';
+import { setupEmulatorPipe } from '../modules/emoteQueue.js';
+import { createPokemon } from '../modules/pokemonCreation.js';
 
 const app = remote.app;
 const appDataPath = app.getPath('userData');
 
 async function runBot() {
     try {
+        log("Loading configuration");
         const fullEmoteCachePath = path.join(appDataPath, emoteCacheFileName);
         const data = await fs.promises.readFile(fullEmoteCachePath);
         // TODO: Error handling
