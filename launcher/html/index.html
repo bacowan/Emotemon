@@ -2,19 +2,24 @@
 <html>
 	<head>
 		<meta charset = "UTF-8">
-		<title>DoomRed</title>
+		<title>Emotémon</title>
         <link rel="stylesheet" type="text/css" href="./styles.css"/>
 	</head>
 
     <body class="text-centered">
-        <h1>Doom Red</h1>
+        <h1>Emotémon</h1>
+        <p>
+            Welcome to Emotémon! If this is your first time here, check out the help to get set up.
+        </p>
         <div class="text-centered">
+            <button id="help">Help</button>
             <button id="configure">Configure</button>
-            <button id="runBot">Run Bot</button>
+            <button id="runBot">Run</button>
         </div>
         
         <script type="module">
-            import { configure, runBot } from '../javascript/topPages/index.js'
+            import { help, configure, runBot } from '../javascript/topPages/index.js'
+            document.getElementById('help').addEventListener('click', help);
             document.getElementById('configure').addEventListener('click', configure);
             document.getElementById('runBot').addEventListener('click', runBot);
         </script>

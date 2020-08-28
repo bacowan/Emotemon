@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset = "UTF-8">
+		<title>Help</title>
+        <link rel="stylesheet" type="text/css" href="./styles.css"/>
+	</head>
+
+    <body class="just-text">
+        <h1 class="text-centered">Help</h1>
+        <h2>Configuration</h2>
+        <p>You'll need to set up a few things to get started:</p>
+        <ol>
+            <li>
+                The emulator:<br/>
+                Emotémon requires VBA-rr to run. Download it <a href="" id="download">here</a>
+                (click on vba-v24m-svn480.LRC4-xp140.7z), or use the <a href="https://github.com/TASVideos/vba-rerecording/releases/download/480LRC4/vba-v24m-svn480.LRC4-xp140.7z">direct download</a>.
+            </li>
+            <li>
+                Obtain a ROM of Pokemon FireRed US V1.1.
+            </li>
+            <li>
+                Set up a twitch bot:<br/>
+                You can use your own twitch account for this, or make a new twitch account.<br/>
+                While logged into the account that you are using, generate an <a href="" id="oauth">OAuth token</a>.
+                (click the connect button and you should see the OAuth token).
+            </li>
+            <li>
+                Connect the bot to your chat:<br/>
+                Open the <a href="" id="configuration">configuration page</a> of Emotémon (also available from the home screen). Under "Bot Name", put the name of your bot
+                (or your twich name if you are using your own account). Under "OAuth", but copy the full value (including "oauth:") of the OAuth token you generated in the last step.
+                Under "Channel", put the name of your channel.
+            </li>
+            <li>
+                Update the Emote Cache:<br/>
+                This lets the bot know where to download emotes. Click the "Update Emote Cache" button. After a few seconds, the value of "Emote cache last updated" should update to the current time.
+                You will only be able to use emotes that were available on twitch at the time you clicked the button, so if you want new emotes to work you will have to click this button after they have been added.
+            </li>
+            <li>
+                Load the Lua script into the emulator:<br/>
+                You will have to do this last step every time you play. Load the emulator you downloaded and run the ROM you obtained.
+                <ol>
+                    <li>
+                        In the emulator, go to "Tools -> Lua Scripting -> New Lua Script Window...".
+                    </li>
+                    <li>
+                        Copy the value from "Lua script path" in the configuration page and past it into the "Script file" text box of the Lua script window.
+                    </li>
+                    <li>
+                        Click "Run" in the Lua Script window.
+                    </li>
+                </ol>
+            </li>
+            <li>
+                Everything should be set up now. From the main page, click "Run".
+            </li>
+        </ol>
+        <h2>How to play</h2>
+        <p>
+            After you hit the "Run" button from the main page, you should see a screen with an Emote Queue column, a Logs column, and some buttons along the bottom.
+            Once the log text "connected" appears, you are ready to play. If someone types "!pokemon [emote]" into your twitch chat, that emote should appear in the
+            Emote Queue column. In your game, when you run into a new Pokemon, that pokemon should be the next emote in the queue.
+        </p>
+        <h2>Troubleshooting</h2>
+        <p>
+            TODO
+        </p>
+
+        <script type="module">
+            const BrowserWindow = require('electron').remote.BrowserWindow;
+            const shell = require('electron').shell;
+
+            function configuration() {
+                const win = new BrowserWindow({
+                    width: 350,
+                    height: 675,
+                    webPreferences: {
+                    nodeIntegration: true
+                    }
+                });
+                //win.setMenu(null);
+                win.loadURL(url.format ({ 
+                    pathname: path.join(__dirname, 'configuration.html'), 
+                    protocol: 'file:', 
+                    slashes: true 
+                }));
+            }
+
+            document.getElementById('configuration').addEventListener('click', configuration);
+            document.getElementById('download').addEventListener('click', () => shell.openExternal("https://github.com/TASVideos/vba-rerecording/releases"));
+            document.getElementById('download').addEventListener('click', () => shell.openExternal("https://twitchapps.com/tmi/"));
+
+
+        </script>
+	</body>
+</html>

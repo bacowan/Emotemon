@@ -27,4 +27,20 @@ function runBot() {
    window.location.href = 'running.html';
 }
 
-export { runBot, configure }
+function help() {
+   const win = new BrowserWindow({
+      width: 1200,
+      height: 800,
+      webPreferences: {
+         nodeIntegration: true
+      }
+   });
+   //win.setMenu(null);
+   win.loadURL(url.format ({ 
+      pathname: path.join(__dirname, 'help.html'), 
+      protocol: 'file:', 
+      slashes: true 
+   }));
+}
+
+export { help, runBot, configure }
