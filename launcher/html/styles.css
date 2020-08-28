@@ -1,20 +1,92 @@
-html, body {
+:root {
+    --background-colour: #252525;
+    --scrollbar-thumb-colour: #0e0e0e;
+    --divider-colour: #2b2b2b;
+    --scrollbar-hover: #3a3a3a;
+    --button-colour: #333d82;
+    --button-hover-colour: #414fa7;
+    --text-colour: #cecece;
+}
+
+* {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    color: var(--text-colour);
+    box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--divider-colour);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb-colour);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-hover);
+}
+
+button {
+    background-color: var(--button-colour);
+    border: none;
+    border-radius: 5px;
+    width: 12em;
+    height: 3em;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: var(--button-hover-colour);
+}
+
+html {
     height: 100%;
+}
+
+body {
     margin: 0;
+    min-height: 100%;
+    overflow: hidden;
+    background: var(--background-colour);
 }
 
 .dashboard-container {
-    display: flex;
-    flex-flow: column;
-    height: 100%;
+    height: 100vh;
 }
 
-.dashboard-container > .dash-logs {
-    flex: 1 1 auto;
+.dash-logs {
+    height: calc(100% - 4em);
 }
 
-.dashboard-container > .dash-bar {
-    flex-basis: 3em;
+.dash-logs > div {
+    overflow-y: scroll;
+    position: relative;
+}
+
+.dash-logs > div > ul {
+    position: absolute;
+    bottom: 0;
+}
+
+.dash-bar {
+    border-top-style: solid;
+    border-color: var(--divider-colour);
+    height: 4em;
+    position: relative;
+}
+
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    width: 100%;
 }
 
 .row {
@@ -27,4 +99,8 @@ html, body {
 
 .clickable {
     cursor: pointer;
+}
+
+.text-centered {
+    text-align: center;
 }
