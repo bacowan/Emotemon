@@ -64,13 +64,17 @@ body {
 }
 
 .dash-logs > div {
-    overflow-y: scroll;
-    position: relative;
+    display: flex;
+    height: 100%;
+    flex-flow: column;
 }
 
-.dash-logs > div > ul {
-    position: absolute;
-    bottom: 0;
+.dash-logs > div > div {
+    flex: 1;
+    overflow-y: scroll;
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
 }
 
 .dash-bar {
