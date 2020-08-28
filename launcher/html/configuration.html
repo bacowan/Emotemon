@@ -5,20 +5,22 @@
 		<title>DoomRed</title>
         <link rel="stylesheet" type="text/css" href="./styles.css"/>
     </head>
-    <body>
-        <h1>Configuration</h1>
+    <body class="settings">
+        <h1 class="text-centered">Configuration</h1>
         <h2>Basic</h2>
+        
+
+
         <label>Bot Name</label>
         <input type="text" id="botName" name="botName"/>
-        <br>
         <label>OAuth</label>
         <input type="password" id="oauth" name="oauth"/>
-        <br>
         <label>Channel</label>
-		<input type="text" id="channel" name="channel"/>
-	    <br>
-        <p>lua script path: </p><p id="luaScriptPath">...</p>
-        <p>emote cache last updated: </p><p id="emoteCacheLastUpdate">...</p>
+        <input type="text" id="channel" name="channel"/>
+        <label>Lua script path:</label>
+        <p id="luaScriptPath">...</p>
+        <label>Emote cache last updated:</label>
+        <p id="emoteCacheLastUpdate">...</p>
         <button id="updateEmoteCache">Update emote cache</button>
         <h2 id="advancedHeader" class="clickable">
             Advanced ▶

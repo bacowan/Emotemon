@@ -6,12 +6,17 @@
     --button-colour: #333d82;
     --button-hover-colour: #414fa7;
     --text-colour: #cecece;
+    --input-text-colour: black;
 }
 
 * {
     font-family: "Trebuchet MS", Helvetica, sans-serif;
     color: var(--text-colour);
     box-sizing: border-box;
+}
+
+input {
+    color: var(--input-text-colour);
 }
 
 ::-webkit-scrollbar {
@@ -107,4 +112,18 @@ body {
 
 .text-centered {
     text-align: center;
+}
+
+.settings {
+    display: table;
+    overflow: scroll;
+}
+
+.settings > *:not(script) {
+    display: block;
+    margin: 0.5em 2em;
+}
+
+label {
+    text-decoration: underline;
 }

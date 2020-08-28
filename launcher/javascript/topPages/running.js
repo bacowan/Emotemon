@@ -99,8 +99,8 @@ function runBotWithConfiguration(emotes, configuration) {
 
 function configure() {
     const win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 350,
+        height: 675,
         webPreferences: {
            nodeIntegration: true
         }

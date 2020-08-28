@@ -9,11 +9,11 @@ const appDataPath = app.getPath('userData');
 
 function configure() {
     const win = new BrowserWindow({
-       width: 800,
-       height: 600,
-       webPreferences: {
-          nodeIntegration: true
-       }
+      width: 350,
+      height: 675,
+      webPreferences: {
+         nodeIntegration: true
+      }
     });
     //win.setMenu(null);
     win.loadURL(url.format ({ 
