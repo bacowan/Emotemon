@@ -32,7 +32,8 @@ function logQueueEmote(pokemon) {
 }
 
 function unlogQueueEmote() {
-
+    const emotesDiv = document.getElementById('emote-queue');
+    emotesDiv.removeChild(emotesDiv.lastElementChild);
 }
 
 export { log, logQueueEmote, unlogQueueEmote }

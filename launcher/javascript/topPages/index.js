@@ -1,3 +1,5 @@
+import { settingsFileName } from '../modules/constants.js';
+import { getCacheLastUpdated } from '../modules/emoteCache.js';
 const remote = require('electron').remote;
 const fs = require('fs');
 const path = require('path');
@@ -23,8 +25,41 @@ function configure() {
     }));
 }
 
-function runBot() {
-   window.location.href = 'running.html';
+async function runBot() {
+   let isConfigSetup;
+   try {
+      const configurationFilePath = path.join(appDataPath, settingsFileName);
+      await fs.promises.access(configurationFilePath);
+      const configurationText = await fs.promises.readFile(configurationFilePath);
+      const configuration = JSON.parse(configurationText);
+
+      isConfigSetup = configuration.botName && configuration.oauth && configuration.channel;
+   }
+   catch {
+      isConfigSetup = false;
+   }
+
+   if (!isConfigSetup) {
+      setRunError("Bot is not fully configured");
+   }
+   else {
+      const emoteCacheLastUpdated = await getCacheLastUpdated();
+      if (emoteCacheLastUpdated == "never") {
+         setRunError("Need to update the emote cache (through Configure");
+      }
+      else {
+         window.location.href = 'running.html';
+      }
+   }
+}
+
+function setRunError(errorMessage) {
+   const tooltip = document.getElementById('error-text');
+   tooltip.innerHTML = errorMessage;
+   tooltip.className += " show";
+   setTimeout(
+      () => tooltip.className = tooltip.className.replace(" show", ""),
+      3000);
 }
 
 function help() {

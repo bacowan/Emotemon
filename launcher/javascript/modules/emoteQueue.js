@@ -9,8 +9,8 @@ function setupEmulatorPipe() {
     const server = net.createServer(c => {
         let emoteText;
         if (emoteQueue.length > 0) {
-            emote = emoteQueue.shift();
-            unlogQueueEmote(emote);
+            emoteText = emoteQueue.shift();
+            unlogQueueEmote();
             log("writing emote");
         }
         else {

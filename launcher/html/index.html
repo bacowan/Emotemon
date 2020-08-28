@@ -9,13 +9,15 @@
     <body class="text-centered">
         <h1>Emotémon</h1>
         <p>
-            Welcome to Emotémon! If this is your first time here, check out the help to get set up.
+            Welcome to Emotémon! If this is your first time here, check out the help page to get set up.
         </p>
         <div class="text-centered">
             <button id="help">Help</button>
             <button id="configure">Configure</button>
             <button id="runBot">Run</button>
         </div>
+
+        <div id="error-text" class="toast"></div>
         
         <script type="module">
             import { help, configure, runBot } from '../javascript/topPages/index.js'
