@@ -28,7 +28,7 @@ function logQueueEmote(pokemon) {
     li.appendChild(row);
 
     const emotesDiv = document.getElementById('emote-queue');
-    emotesDiv.appendChild(li);
+    emotesDiv.prepend(li);
 }
 
 function unlogQueueEmote() {

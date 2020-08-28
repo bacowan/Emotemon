@@ -127,3 +127,33 @@ body {
 label {
     text-decoration: underline;
 }
+
+ul {
+    list-style: none;
+    padding-left: 1em;
+}
+
+ul.emote-queue > li > div > * {
+    display: inline-block;
+}
+
+ul.emote-queue > li > div {
+    border-top: solid;
+    padding: 0.5em 0;
+    border-width: thin;
+}
+
+ul.emote-queue > li {
+    position: relative;
+}
+
+ul.emote-queue > li > div > img {
+    margin-right: 1em;
+}
+
+ul.emote-queue > li > div > p {
+    position: absolute;
+    top: 50%;
+    margin: 0;
+    transform: translateY(-50%);
+}
