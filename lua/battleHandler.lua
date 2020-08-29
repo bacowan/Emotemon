@@ -99,7 +99,7 @@ function overwritePokemon(pokemonPointer)
     -- todo. For now, I should just keep track of how large each sprite is and remove that. Calculating the size of the sprite on the fly is hard
     
     -- write the image
-    local baseImageAddress = findEmptySpace(#newPokemonData.emotePixels)
+    local baseImageAddress = memorySearch.findEmptySpace(#newPokemonData.emotePixels)
     for i=1,#newPokemonData.emotePixels do
         memory.writebyte(baseImageAddress+i-1, newPokemonData.emotePixels[i])
     end
@@ -204,6 +204,6 @@ function hexStringToByteArray(string)
     return array
 end
 
-
+M.hexStringToByteArray = hexStringToByteArray
 M.handleBattle = handleBattle
 return M

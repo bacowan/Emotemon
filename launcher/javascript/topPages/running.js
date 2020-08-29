@@ -7,7 +7,8 @@ const BrowserWindow = require('electron').remote.BrowserWindow;
 import { settingsFileName, emoteCacheFileName } from '../modules/constants.js';
 import { log } from '../modules/logging.js';
 import { setupEmulatorPipe } from '../modules/emoteQueue.js';
-import { createPokemon } from '../modules/pokemonCreation.js';
+import { createPokemon, downloadEmote, formatEmote } from '../modules/pokemonCreation.js';
+import { defaultEmoteName } from '../modules/constants.js';
 
 const app = remote.app;
 const appDataPath = app.getPath('userData');
@@ -44,9 +45,13 @@ async function loadConfiguration() {
     }
 }
 
-function runBotWithConfiguration(emotes, configuration) {
+async function runBotWithConfiguration(emotes, configuration) {
+    const defaultEmoteId = emotes[defaultEmoteName];
+    const defaultEmote = await downloadEmote(defaultEmoteId);
+	const { pixels: defaultPixels, palette: defaultPalette } = await formatEmote(defaultEmote);
+
     log('connecting');
-    const emulatorPipe = setupEmulatorPipe();
+    const emulatorPipe = setupEmulatorPipe(defaultPixels, defaultPalette);
 
     const options = {
         identity: {

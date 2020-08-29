@@ -119,6 +119,7 @@ end
 obj.levelsToExp = getLevelsToExp()
 
 obj.fileName = '\\\\.\\pipe\\doomred'
+obj.defaultEmoteFileName = '\\\\.\\pipe\\doomred-default'
 
 obj.battleTypes = {
     ["none"]=28,
@@ -137,14 +138,17 @@ obj.dataStructureOffset = 32
 obj.levelOffset = 84
 obj.checksumOffset = 28
 obj.pokemonNicknameOffset = 8
+obj.bulbasaurOffset = 1
+obj.charmanderOffset = 4
+obj.squirtleOffset = 7
 
 -- pointers
 -- Methods
 obj.wildPokemonBattleFunction = 0x08010672
-obj.getStarterPokemon = 0x0806C044
+obj.getStarterPokemonFunction = 0x0806C044
 
 -- ROM
-obj.romStartAddress = 0x08000000
+obj.romStartAddress = 0x08800000
 obj.romEndAddress = 0x09FC03FF
 obj.surroundingBlankSpace = 0
 
