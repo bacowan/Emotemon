@@ -139,13 +139,16 @@ obj.checksumOffset = 28
 obj.pokemonNicknameOffset = 8
 
 -- pointers
+-- Methods
+obj.wildPokemonBattleFunction = 0x08010672
+obj.getStarterPokemon = 0x0806C044
+
 -- ROM
 obj.romStartAddress = 0x08000000
 obj.romEndAddress = 0x09FC03FF
 obj.surroundingBlankSpace = 0
 
 obj.pokemonNamesPointer = 0x08245F50
-obj.wildPokemonBattleFunction = 0x08010672
 obj.baseStatsPointer = 0x08254810
 obj.movesetPointers = 0x0825D824
 obj.frontSpritePointer = 0x0823511C
