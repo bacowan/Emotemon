@@ -1,14 +1,17 @@
 local constants = require 'constants'
 local battleHandler = require 'battleHandler'
 local memorySearch = require 'memorySearch'
+local pokemonWriter = require 'pokemonWriter'
 
 print 'script running'
 
 local currentBattleType = 0
 
+-- todo: there's a memory.registerwrite function that's probably more efficient
 function battleStarting()
     local battleType = memory.readbyte(constants.battleTypePointer)
-    if (battleType ~= currentBattleType and battleType ~= constants.battleTypes["none"]) and (battleType == constants.battleTypes["wild"] or battleType == constants.battleTypes["trainer"]) then
+
+    if (battleType ~= currentBattleType and (battleType == constants.battleTypes["wild"] or battleType == constants.battleTypes["trainer"] or battleType == constants.battleTypes["rival"])) then
         currentBattleType = battleType
         return true
     end
@@ -16,13 +19,33 @@ function battleStarting()
     return false
 end
 
-function onFrame()
-    if battleStarting() then
-        battleHandler.handleBattle()
+local hasPartyMember = false
+
+-- todo: there's a memory.registerexec function that's probably more efficient
+function getStarter()
+    if (hasPartyMember ~= true) then
+        local firstPartyLanguage = memory.readword(constants.partyPokemonPointers[1] + constants.languageOffset)
+        if firstPartyLanguage ~= 0 then
+            hasPartyMember = true
+            return true
+        else
+            return false
+        end
+    else
+        return false
     end
 end
 
-function setup()
+function onFrame()
+    if battleStarting() then
+        battleHandler.handleBattle()
+    elseif getStarter() then
+        pokemonWriter.overwritePokemon(constants.partyPokemonPointers[1])
+    end
+end
+
+function setupStarters()
+    -- the three starter pokemon will appear as the twitch glitch until you select one
     local f = io.open(constants.defaultEmoteFileName, 'r')
     io.input(f)
 
@@ -31,31 +54,14 @@ function setup()
 
     io.close(f)
 
-    local pixelsString = battleHandler.hexStringToByteArray(pixels)
-    local paletteString = battleHandler.hexStringToByteArray(palette)
+    local pixelsString = pokemonWriter.hexStringToByteArray(pixels)
+    local paletteString = pokemonWriter.hexStringToByteArray(palette)
 
-    overwriteSprite(constants.bulbasaurOffset, pixelsString, paletteString)
-    overwriteSprite(constants.charmanderOffset, pixelsString, paletteString)
-    overwriteSprite(constants.squirtleOffset, pixelsString, paletteString)
+    pokemonWriter.overwritePokemonSprite(constants.bulbasaurOffset, pixelsString, paletteString)
+    pokemonWriter.overwritePokemonSprite(constants.charmanderOffset, pixelsString, paletteString)
+    pokemonWriter.overwritePokemonSprite(constants.squirtleOffset, pixelsString, paletteString)
 end
 
-function overwriteSprite(offset, pixels, palette)
-    local baseImageAddress = memorySearch.findEmptySpace(#pixels)
-    print(palette)
-    for i=1,#pixels do
-        memory.writebyte(baseImageAddress+i-1, pixels[i])
-    end
-    memory.writedword(constants.frontSpritePointer+offset*8, baseImageAddress)
-    memory.writedword(constants.backSpritePointer+offset*8, baseImageAddress)
-    
-    -- write the palette
-    local basePaletteAddress = memorySearch.findEmptySpace(#palette)
-    print(string.format("%x",basePaletteAddress))
-    for i=1,#palette do
-        memory.writebyte(basePaletteAddress+i-1, palette[i])
-    end
-    memory.writedword(constants.palettePointer+offset*8, basePaletteAddress)
-end
+setupStarters()
 
-setup()
 gui.register(onFrame)
