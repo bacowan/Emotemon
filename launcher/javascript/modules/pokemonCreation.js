@@ -149,4 +149,4 @@ async function quantize(image) {
 	return { pixels: tiledAsBytes, palette: formattedPalette };
 }
 
-export { downloadEmote, createPokemon, formatAsString }
+export { downloadEmote, createPokemon, formatAsString, formatEmote }

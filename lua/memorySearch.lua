@@ -4,7 +4,6 @@ local M = {}
 
 function findEmptySpace(length)
     emptyByteCount = 0
-    
     offset = constants.romStartAddress
     while offset < constants.romEndAddress do
         if memory.readbyte(offset) == 0xFF then
