@@ -1,13 +1,14 @@
 local constants = require 'constants'
 local pokemonWriter = require 'pokemonWriter'
+local serverCommunication = require 'serverCommunication'
 
 local M = {}
 
-function handleBattle()
+function handleBattle(spriteSizes)
     print 'battle start'
     local pokemonCount = getPokemonCount()
     for i=1,pokemonCount do
-        pokemonWriter.overwritePokemon(constants.enemyPokemonPointers[i])
+        pokemonWriter.overwritePokemonFromPipe(spriteSizes, constants.enemyPokemonPointers[i])
     end
 end
 

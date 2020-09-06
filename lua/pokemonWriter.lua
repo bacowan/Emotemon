@@ -1,6 +1,7 @@
 local constants = require 'constants'
 local substructureUtils = require 'substructureUtils'
 local memorySearch = require 'memorySearch'
+local serverCommunication = require 'serverCommunication'
 
 local M = {}
 
@@ -16,15 +17,19 @@ function tablesEqual(t1,t2)
     return true
 end
 
-function overwritePokemon(pokemonPointer)
-    local rawData = readPipe()
-    local newPokemonData = formatRawPokemonData(rawData)
-    
-    local personality = memory.readdword(pokemonPointer)
-    local otId = memory.readdword(pokemonPointer+constants.otIdOffset)
-    local encryptionKey = substructureUtils.getEncryptionKey(otId, personality)
-    local substructureOrder = substructureUtils.getSubstructureOrder(personality)
-    local growth, attacks, ev, misc = substructureUtils.decrypt(pokemonPointer, encryptionKey, substructureOrder)
+function overwritePokemonFromPipe(spriteSizes, pokemonPointer)
+    local rawData = serverCommunication.readPipe()
+    local newPokemonData = serverCommunication.formatRawPokemonData(rawData)
+    local newPokemonId = overwritePokemon(newPokemonData, pokemonPointer)
+    local spriteSize = {}
+    spriteSize.palette = #newPokemonData.emotePalette
+    spriteSize.pixels = #newPokemonData.emotePixels
+    print(spriteSize)
+    spriteSizes[newPokemonId] = spriteSize
+end
+
+function overwritePokemon(newPokemonData, pokemonPointer)
+    local pokemonData = substructureUtils.getAllPokemonData(pokemonPointer)
     
     -- read in the base stats
     local baseStats = memory.readbyterange(constants.baseStatsPointer + (nextPokemonId-1)*constants.baseStatsSize, constants.baseStatsSize)
@@ -32,10 +37,10 @@ function overwritePokemon(pokemonPointer)
     -- overwrite the substructres with the input data
     level = memory.readbyte(pokemonPointer+constants.levelOffset)
     levelUpType = memory.readbyte(constants.baseStatsPointer + (nextPokemonId-1)*28 + 19) -- TODO: what do these magic numbers mean?
-    substructureUtils.convertSubstructures(newPokemonData, nextPokemonId, level, levelUpType, growth, attacks, ev, misc)
+    substructureUtils.convertSubstructures(newPokemonData, nextPokemonId, level, levelUpType, pokemonData.growth, pokemonData.attacks, pokemonData.ev, pokemonData.misc)
     
     -- write the encrypted data
-    local encryptedData, checksum = substructureUtils.encrypt(substructureOrder, growth, attacks, ev, misc, encryptionKey)
+    local encryptedData, checksum = substructureUtils.encrypt(pokemonData.substructureOrder, pokemonData.growth, pokemonData.attacks, pokemonData.ev, pokemonData.misc, pokemonData.encryptionKey)
     for i=1,4 do
         for j=1,#encryptedData[i] do
             memory.writebyte(pokemonPointer + constants.dataStructureOffset + (i-1)*constants.substructureSize + (j-1), encryptedData[i][j])
@@ -49,40 +54,46 @@ function overwritePokemon(pokemonPointer)
     end
     memory.writebyte(pokemonPointer+constants.pokemonNicknameOffset+#newPokemonData.name, 0xFF)
     
-    -- Write the species name
-    for i=1,#newPokemonData.name do
-        memory.writebyte(constants.pokemonNamesPointer + (constants.pokemonNameSize+1)*nextPokemonId + i-1, constants.chars[string.upper(newPokemonData.name:sub(i,i))])
-    end
-    memory.writebyte(constants.pokemonNamesPointer + (constants.pokemonNameSize+1)*nextPokemonId + #newPokemonData.name, 0xFF)
-    
-    -- write the base stats
-    substructureUtils.convertBaseStats(newPokemonData, baseStats)
-    for i=1,#baseStats do
-        memory.writebyte(constants.baseStatsPointer + (nextPokemonId-1)*constants.baseStatsSize + i-1, baseStats[i])
-    end
-    
-    -- remove old moves learnable
-    local oldMovesLearnableAddress = memory.readdword(constants.movesetPointers+nextPokemonId*4)
-    local currentByte = 0
-    while currentByte ~= 0xFF do
-        memory.writebyte(oldMovesLearnableAddress, 0xFF)
-        oldMovesLearnableAddress = oldMovesLearnableAddress + 1
-        currentByte = memory.readbyte(oldMovesLearnableAddress)
-    end
-    
-    -- write the moves learnable
-    local newMovesLearnableAddress = memorySearch.findEmptySpace(#newPokemonData.moveset*2+1)
-    for i=1,#newPokemonData.moveset do
-        memory.writebyte(newMovesLearnableAddress + (i-1)*2, newPokemonData.moveset[i][2])
-        memory.writebyte(newMovesLearnableAddress + (i-1)*2 + 1, newPokemonData.moveset[i][1])
-    end
-    memory.writebyte(newMovesLearnableAddress + #newPokemonData.moveset*2, 0xFF)
-    memory.writedword(constants.movesetPointers+nextPokemonId*4, newMovesLearnableAddress)
-    
-    -- todo: remove old image. For now, I should just keep track of how large each sprite is and remove that. Calculating the size of the sprite on the fly is hard
-    overwritePokemonSprite(nextPokemonId, newPokemonData.emotePixels, newPokemonData.emotePalette)
+    overwriteSpeciesData(newPokemonData, baseStats)
 
     nextPokemonId = nextPokemonId + 1
+
+    return nextPokemonId - 1
+end
+
+function overwriteSpeciesData(pokemonData, baseStats)
+        -- Write the species name
+        for i=1,#pokemonData.name do
+            memory.writebyte(constants.pokemonNamesPointer + (constants.pokemonNameSize+1)*nextPokemonId + i-1, constants.chars[string.upper(pokemonData.name:sub(i,i))])
+        end
+        memory.writebyte(constants.pokemonNamesPointer + (constants.pokemonNameSize+1)*nextPokemonId + #pokemonData.name, 0xFF)
+        
+        -- write the base stats
+        substructureUtils.convertBaseStats(pokemonData, baseStats)
+        for i=1,#baseStats do
+            memory.writebyte(constants.baseStatsPointer + (nextPokemonId-1)*constants.baseStatsSize + i-1, baseStats[i])
+        end
+        
+        -- remove old moves learnable
+        local oldMovesLearnableAddress = memory.readdword(constants.movesetPointers+nextPokemonId*4)
+        local currentByte = 0
+        while currentByte ~= 0xFF do
+            memory.writebyte(oldMovesLearnableAddress, 0xFF)
+            oldMovesLearnableAddress = oldMovesLearnableAddress + 1
+            currentByte = memory.readbyte(oldMovesLearnableAddress)
+        end
+        
+        -- write the moves learnable
+        local newMovesLearnableAddress = memorySearch.findEmptySpace(#pokemonData.moveset*2+1)
+        for i=1,#pokemonData.moveset do
+            memory.writebyte(newMovesLearnableAddress + (i-1)*2, pokemonData.moveset[i][2])
+            memory.writebyte(newMovesLearnableAddress + (i-1)*2 + 1, pokemonData.moveset[i][1])
+        end
+        memory.writebyte(newMovesLearnableAddress + #pokemonData.moveset*2, 0xFF)
+        memory.writedword(constants.movesetPointers+nextPokemonId*4, newMovesLearnableAddress)
+        
+        -- todo: remove old image. For now, I should just keep track of how large each sprite is and remove that. Calculating the size of the sprite on the fly is hard
+        overwritePokemonSprite(nextPokemonId, pokemonData.emotePixels, pokemonData.emotePalette)
 end
 
 function overwritePokemonSprite(pokemonId, emotePixels, emotePalette)
@@ -107,49 +118,6 @@ function overwritePokemonSprite(pokemonId, emotePixels, emotePalette)
     --end
 end
 
-function formatRawPokemonData(rawData)
-    local ret = {}
-    ret.name = rawData.name:sub(0,10)
-    ret.attack1 = tonumber(rawData.attack1)
-    ret.attack2 = tonumber(rawData.attack2)
-    ret.attack3 = tonumber(rawData.attack3)
-    ret.attack4 = tonumber(rawData.attack4)
-    ret.pp1 = tonumber(rawData.pp1)
-    ret.pp2 = tonumber(rawData.pp2)
-    ret.pp3 = tonumber(rawData.pp3)
-    ret.pp4 = tonumber(rawData.pp4)
-    ret.type1  = tonumber(rawData.type1 )
-    ret.type2 = tonumber(rawData.type2)
-    ret.ability = tonumber(rawData.ability)
-
-    if rawData.gender == "0" then
-        ret.gender = 0 -- male
-    elseif rawData.gender == "1" then
-        ret.gender = 1 -- female
-    else
-        ret.gender = 255
-    end
-
-    ret.moveset = {}
-    local levelIndex = string.find(rawData.movesLearnable, "L")
-    while levelIndex ~= nil do
-        local moveIndex = string.find(rawData.movesLearnable, "M", levelIndex)
-        local endIndex = string.find(rawData.movesLearnable, "E", levelIndex)
-
-        local levelValue = tonumber(rawData.movesLearnable:sub(levelIndex + 1, moveIndex - 1))
-        local moveValue = tonumber(rawData.movesLearnable:sub(moveIndex + 1, endIndex - 1))
-
-        table.insert(ret.moveset, {levelValue * 2, moveValue})
-
-        local levelIndex = string.find(rawData.movesLearnable, "L", levelIndex + 1)
-    end
-    
-    ret.emotePixels = hexStringToByteArray(rawData.emotePixels)
-    ret.emotePalette = hexStringToByteArray(rawData.emotePalette)
-
-    return ret
-end
-
 function hexStringToByteArray(string)
     array = {}
     for i=1,#string/2 do
@@ -158,40 +126,10 @@ function hexStringToByteArray(string)
     return array
 end
 
-function readPipe()
-    local f = io.open(constants.fileName, 'r')
-    io.input(f)
-
-    local ret = {}
-
-    ret.name = io.read("*l")
-
-    if (ret.name == "0") then
-        return nil
-    end
-
-    ret.attack1 = io.read("*l")
-    ret.attack2 = io.read("*l")
-    ret.attack3 = io.read("*l")
-    ret.attack4 = io.read("*l")
-    ret.pp1 = io.read("*l")
-    ret.pp2 = io.read("*l")
-    ret.pp3 = io.read("*l")
-    ret.pp4 = io.read("*l")
-    ret.ability = io.read("*l")
-    ret.gender = io.read("*l")
-    ret.type1 = io.read("*l")
-    ret.type2 = io.read("*l")
-    ret.movesLearnable = io.read("*l")
-    ret.emotePixels = io.read("*l")
-    ret.emotePalette = io.read("*l")
-    io.close(f)
-
-    return ret
-end
-
 M.hexStringToByteArray = hexStringToByteArray
 M.overwritePokemon = overwritePokemon
+M.overwritePokemonFromPipe = overwritePokemonFromPipe
+M.overwriteSpeciesData = overwriteSpeciesData
 M.overwritePokemonSprite = overwritePokemonSprite
 M.readPipe = readPipe
 

@@ -2,16 +2,20 @@ local constants = require 'constants'
 local battleHandler = require 'battleHandler'
 local memorySearch = require 'memorySearch'
 local pokemonWriter = require 'pokemonWriter'
+local saving = require 'saving'
+local serverCommunication = require 'serverCommunication'
 
 print 'script running'
 
-local currentBattleType = 0
+local currentBattleType = nil
+local saveFilePath = ""
+local spriteSizes = {}
 
 -- todo: there's a memory.registerwrite function that's probably more efficient
 function battleStarting()
     local battleType = memory.readbyte(constants.battleTypePointer)
 
-    if (battleType ~= currentBattleType and (battleType == constants.battleTypes["wild"] or battleType == constants.battleTypes["trainer"] or battleType == constants.battleTypes["rival"])) then
+    if (currentBattleType ~= nil and battleType ~= currentBattleType and (battleType == constants.battleTypes["wild"] or battleType == constants.battleTypes["trainer"] or battleType == constants.battleTypes["rival"])) then
         currentBattleType = battleType
         return true
     end
@@ -38,21 +42,35 @@ end
 
 function onFrame()
     if battleStarting() then
-        battleHandler.handleBattle()
+        battleHandler.handleBattle(spriteSizes)
     elseif getStarter() then
-        pokemonWriter.overwritePokemon(constants.partyPokemonPointers[1])
+        pokemonWriter.overwritePokemonFromPipe(spriteSizes, constants.partyPokemonPointers[1])
     end
 end
 
-function setupStarters()
-    -- the three starter pokemon will appear as the twitch glitch until you select one
-    local f = io.open(constants.defaultEmoteFileName, 'r')
+function saveStateLoaded()
+    load(saveFilePath)
+end
+
+function saveStateSaved()
+    save(spriteSizes, saveFilePath)
+end
+
+function initialConfiguration()
+    local f = io.open(constants.configFileName, 'r')
     io.input(f)
 
+    saveFilePath = io.read("*l")
     local pixels = io.read("*l")
     local palette = io.read("*l")
 
     io.close(f)
+
+    setupStarters(pixels, palette)
+end
+
+function setupStarters(pixels, palette)
+    -- the three starter pokemon will appear as the twitch glitch until you select one
 
     local pixelsString = pokemonWriter.hexStringToByteArray(pixels)
     local paletteString = pokemonWriter.hexStringToByteArray(palette)
@@ -62,6 +80,8 @@ function setupStarters()
     pokemonWriter.overwritePokemonSprite(constants.squirtleOffset, pixelsString, paletteString)
 end
 
-setupStarters()
+initialConfiguration()
 
 gui.register(onFrame)
+vba.registerloaded(saveStateLoaded)
+vba.registersaved(saveStateSaved)

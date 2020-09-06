@@ -32,6 +32,18 @@ function decrypt(pokemonPointer, encryptionKey, substructureOrder)
     return growth, attacks, ev, misc
 end
 
+function getAllPokemonData(pokemonPointer)
+    local pokemonData = {}
+
+    pokemonData.personality = memory.readdword(pokemonPointer)
+    pokemonData.otId = memory.readdword(pokemonPointer+constants.otIdOffset)
+    pokemonData.encryptionKey = getEncryptionKey(pokemonData.otId, pokemonData.personality)
+    pokemonData.substructureOrder = getSubstructureOrder(pokemonData.personality)
+    pokemonData.growth, pokemonData.attacks, pokemonData.ev, pokemonData.misc = decrypt(pokemonPointer, pokemonData.encryptionKey, pokemonData.substructureOrder)
+
+    return pokemonData
+end
+
 function convertSubstructures(input, pokemonId, level, levelUpType, growth, attacks, ev, misc)
     -- attacks
     attacks[1] = bit.band(input.attack1, 0xFF)
@@ -74,11 +86,11 @@ function calculateChecksum(unencryptedData)
 end
 
 function convertBaseStats(input, baseStats)
-    baseStats[7] = input.type1
-    baseStats[8] = input.type2
-    baseStats[23] = input.ability
-    baseStats[24] = input.ability
-    baseStats[17] = input.gender
+    baseStats[constants.baseType1Offset - 1] = input.type1
+    baseStats[constants.baseType2Offset - 1] = input.type2
+    baseStats[constants.baseAbility1Offset - 1] = input.ability
+    baseStats[constants.baseAbility2Offset - 1] = input.ability
+    baseStats[constants.baseGenderOffset - 1] = input.gender
 end
 
 function encrypt(substructureOrder, growth, attacks, ev, misc, encryptionKey)
@@ -108,5 +120,6 @@ M.calculateChecksum = calculateChecksum
 M.encrypt = encrypt
 M.decrypt = decrypt
 M.convertBaseStats = convertBaseStats
+M.getAllPokemonData = getAllPokemonData
 
 return M

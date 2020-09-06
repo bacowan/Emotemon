@@ -119,18 +119,20 @@ end
 obj.levelsToExp = getLevelsToExp()
 
 obj.fileName = '\\\\.\\pipe\\doomred'
-obj.defaultEmoteFileName = '\\\\.\\pipe\\doomred-default'
+obj.configFileName = '\\\\.\\pipe\\doomred-config'
 
 obj.battleTypes = {
+    ["none"]=0,
     ["wild"]=0x04,
     ["trainer"]=0x0C,
     ["rival"]=0x1C
 }
 
-obj.pokemonNameLength = 10
 obj.pokemonNameSize = 10
 obj.substructureSize = 12
 obj.baseStatsSize = 28
+obj.boxPokemonSize = 80
+obj.boxPokemonCount = 420
 
 -- pointer offsets
 obj.otIdOffset = 4
@@ -142,6 +144,12 @@ obj.bulbasaurOffset = 1
 obj.charmanderOffset = 4
 obj.squirtleOffset = 7
 obj.languageOffset = 18
+obj.pokemonBoxStartingOffset = 4
+obj.baseType1Offset = 6
+obj.baseType2Offset = 7
+obj.baseGenderOffset = 16
+obj.baseAbility1Offset = 22
+obj.baseAbility2Offset = 23
 
 -- pointers
 -- Methods
@@ -163,6 +171,7 @@ obj.iconPointers = 0x083D3810
 
 -- RAM
 obj.battleTypePointer = 0x02022B4C
+obj.boxPokemonPointer = 0x03005010
 obj.enemyPokemonPointers = {
     0x0202402C, 0x02024090, 0x020240F4, 0x02024158, 0x020241BC, 0x02024220
 }

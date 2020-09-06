@@ -37,7 +37,8 @@ async function loadConfiguration() {
         return {
             botName: configuration.botName,
             oauth: configuration.oauth,
-            channel: configuration.channel
+            channel: configuration.channel,
+            saveFilePath: configuration.saveFilePath
         }
     }
     catch(err) {
@@ -51,7 +52,7 @@ async function runBotWithConfiguration(emotes, configuration) {
 	const { pixels: defaultPixels, palette: defaultPalette } = await formatEmote(defaultEmote);
 
     log('connecting');
-    const emulatorPipe = setupEmulatorPipe(defaultPixels, defaultPalette);
+    const emulatorPipe = setupEmulatorPipe(configuration.saveFilePath, defaultPixels, defaultPalette);
 
     const options = {
         identity: {

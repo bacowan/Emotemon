@@ -11,11 +11,11 @@
         
 
 
-        <label>Bot Name</label>
+        <label for="botName">Bot Name</label>
         <input type="text" id="botName" name="botName"/>
-        <label>OAuth</label>
+        <label for="oauth">OAuth</label>
         <input type="password" id="oauth" name="oauth"/>
-        <label>Channel</label>
+        <label for="channel">Channel</label>
         <input type="text" id="channel" name="channel"/>
         <label>Lua script path:</label>
         <p id="luaScriptPath">...</p>
@@ -26,7 +26,8 @@
             Advanced ▶
         </h2>
         <div id="advancedDiv" style="display: none;">
-            <p>some stuff</p>
+            <label for="saveFilePath">Save File Name</label>
+            <input type="text" id="saveFilePath" name="saveFilePath"/>
         </div>
         <button id="save">Save</button>
 
