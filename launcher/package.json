@@ -17,7 +17,7 @@
     "url": "https://github.com/bacowan/DoomRedV2/issues"
   },
   "devDependencies": {
-    "electron": "9.2.0",
+    "electron": "9.3.1",
     "electron-rebuild": "^2.0.0"
   },
   "homepage": "https://github.com/bacowan/DoomRedV2#readme",
