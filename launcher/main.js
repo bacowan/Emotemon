@@ -7,7 +7,8 @@ function createWindow() {
       width: 800,
       height: 600,
       webPreferences: {
-         nodeIntegration: true
+         nodeIntegration: true,
+         nativeWindowOpen: true
       }
    });
    win.setMenu(createMenu());
@@ -19,7 +20,7 @@ function loadUrl(urlToLoad) {
       pathname: path.join(__dirname, urlToLoad), 
       protocol: 'file:', 
       slashes: true 
-   }))
+   }));
 }
 
 function createMenu() {

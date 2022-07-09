@@ -11,11 +11,16 @@
         <label for="botName">Bot Name</label>
         <input type="text" id="botName" name="botName"/>
         <label for="oauth">OAuth</label>
-        <input type="password" id="oauth" name="oauth"/>
+        <div class="button-input">
+            <input type="password" id="oauth" name="oauth"/>
+            <button id="authenticate">
+                <img src="../svg/external-link.svg"></object>
+            </button>
+        </div>
         <label for="channel">Channel</label>
         <input type="text" id="channel" name="channel"/>
         <label for="mgba">mGBA Executable Path</label>
-        <div class="file-selector">
+        <div class="button-input">
             <input type="text" id="mgba" name="mgba"/>
             <button id="mgbaLoad">
                 <img src="../svg/search.svg"></object>
@@ -36,8 +41,9 @@
         <button id="save">Save</button>
 
         <script type="module">
-            import { updateEmoteCache, onAdvancedClicked, onMgbaLoadClicked, save, onConfigurationPageLoad } from '../javascript/topPages/configuration.js'
+            import { authenticate, updateEmoteCache, onAdvancedClicked, onMgbaLoadClicked, save, onConfigurationPageLoad } from '../javascript/topPages/configuration.js'
             document.getElementById('mgbaLoad').addEventListener('click', onMgbaLoadClicked);
+            document.getElementById('authenticate').addEventListener('click', authenticate);
             document.getElementById('updateEmoteCache').addEventListener('click', updateEmoteCache);
             document.getElementById('advancedHeader').addEventListener('click', onAdvancedClicked);
             document.getElementById('save').addEventListener('click', save);

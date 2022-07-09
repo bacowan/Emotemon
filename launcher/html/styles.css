@@ -59,19 +59,19 @@ button:hover {
     background-color: var(--button-hover-colour);
 }
 
-.file-selector {
+.button-input {
     display: flex;
     flex-direction: row;
     font: 400 13.3333px Arial;
 }
 
-.file-selector > button {
+.button-input > button {
     width: 2em;
     height: 2em;
     position: relative;
 }
 
-.file-selector > button > img {
+.button-input > button > img {
     width: 1.2em;
     height: 1.2em;
     margin: 0;

@@ -6,6 +6,7 @@ import { updateEmoteCache as updateEmoteCacheDontWrite, getCacheLastUpdated } fr
 
 const app = remote.app;
 const appDataPath = app.getPath('userData');
+const configData = require('../config.json');
 
 async function onConfigurationPageLoad() {
     try {
@@ -13,8 +14,8 @@ async function onConfigurationPageLoad() {
         await fs.promises.access(configurationFilePath);
         const configurationText = await fs.promises.readFile(configurationFilePath);
         const configuration = JSON.parse(configurationText);
-        document.getElementById('botName').value = configuration.botName;
-        document.getElementById('oauth').value = configuration.oauth;
+        //document.getElementById('botName').value = configuration.botName;
+        //document.getElementById('oauth').value = configuration.oauth;
         document.getElementById('channel').value = configuration.channel;
         document.getElementById('saveFilePath').value = configuration.saveFilePath;
         document.getElementById('mgba').value = configuration.mgbaPath;
@@ -50,8 +51,8 @@ function onAdvancedClicked() {
 async function save() {
     const configurationFilePath = path.join(appDataPath, settingsFileName);
     const configuration = {
-        botName: document.getElementById('botName').value,
-        oauth: document.getElementById('oauth').value,
+        //botName: document.getElementById('botName').value,
+        //oauth: document.getElementById('oauth').value,
         channel: document.getElementById('channel').value,
         saveFilePath: document.getElementById('saveFilePath').value,
         mgbaPath: document.getElementById('mgba').value
@@ -69,4 +70,37 @@ async function updateEmoteCacheText() {
     document.getElementById("emoteCacheLastUpdate").innerHTML = cacheLastUpdated.toLocaleString();
 }
 
-export { onConfigurationPageLoad, save, onAdvancedClicked, updateEmoteCache, onMgbaLoadClicked }
+async function authenticate() {
+    const clientId = configData.clientId;
+    const redirectUri = path.join(path.dirname(window.location.pathname), 'json_window.html').substring(1).replace(/\\/g, '/');
+
+    function uuid() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+      }
+
+    let popupWindow = new remote.BrowserWindow({
+        webPreferences: {
+            partition: uuid()
+        }
+    });
+    popupWindow.webContents.on('did-finish-load', () => {
+        console.log(popupWindow.getURL());
+        const hash = new URL(popupWindow.getURL()).hash;
+        if (hash) {
+            document.getElementById('oauth').value = hash.substring(hash.indexOf('=') + 1, hash.indexOf('&'));
+            popupWindow.close();
+        }
+    });
+    popupWindow.loadURL(
+        "https://id.twitch.tv/oauth2/authorize"
+            + "?response_type=token"
+            + "&redirect_uri=" + "http://localhost:3000"
+            + "&client_id=" + clientId
+            //+ "&state=" //TODO
+            + "&scope=chat%3Aread+chat%3Aedit");
+}
+
+export { onConfigurationPageLoad, save, onAdvancedClicked, updateEmoteCache, onMgbaLoadClicked, authenticate }
