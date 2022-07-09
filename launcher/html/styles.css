@@ -10,10 +10,19 @@
     --toast-colour: #7e4b00;
 }
 
+script {
+    display: none !important;
+}
+
 * {
     font-family: "Trebuchet MS", Helvetica, sans-serif;
     color: var(--text-colour);
     box-sizing: border-box;
+}
+
+.settings > *, .just-text {
+    display: block;
+    margin: 0.5em 2em;
 }
 
 input {
@@ -48,6 +57,28 @@ button {
 
 button:hover {
     background-color: var(--button-hover-colour);
+}
+
+.file-selector {
+    display: flex;
+    flex-direction: row;
+    font: 400 13.3333px Arial;
+}
+
+.file-selector > button {
+    width: 2em;
+    height: 2em;
+    position: relative;
+}
+
+.file-selector > button > img {
+    width: 1.2em;
+    height: 1.2em;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 html {
@@ -118,11 +149,6 @@ body {
 .settings {
     display: table;
     overflow: scroll;
-}
-
-.settings > *:not(script), .just-text {
-    display: block;
-    margin: 0.5em 2em;
 }
 
 .just-text {

@@ -17,11 +17,19 @@ async function onConfigurationPageLoad() {
         document.getElementById('oauth').value = configuration.oauth;
         document.getElementById('channel').value = configuration.channel;
         document.getElementById('saveFilePath').value = configuration.saveFilePath;
+        document.getElementById('mgba').value = configuration.mgbaPath;
         await updateEmoteCacheText();
     }
     catch(err) {
         const defaultSaveFilePath = path.join(appDataPath, defaultSaveFileName);
         document.getElementById('saveFilePath').value = defaultSaveFilePath;
+    }
+}
+
+async function onMgbaLoadClicked() {
+    const result = await remote.dialog.showOpenDialog({properties: ['openFile']});
+    if (!result.canceled && Array.isArray(result.filePaths) && result.filePaths.length === 1) {
+        document.getElementById('mgba').value = result.filePaths[0];
     }
 }
 
@@ -45,7 +53,8 @@ async function save() {
         botName: document.getElementById('botName').value,
         oauth: document.getElementById('oauth').value,
         channel: document.getElementById('channel').value,
-        saveFilePath: document.getElementById('saveFilePath').value
+        saveFilePath: document.getElementById('saveFilePath').value,
+        mgbaPath: document.getElementById('mgba').value
     };
     await fs.promises.writeFile(configurationFilePath, JSON.stringify(configuration));
 }
@@ -60,4 +69,4 @@ async function updateEmoteCacheText() {
     document.getElementById("emoteCacheLastUpdate").innerHTML = cacheLastUpdated.toLocaleString();
 }
 
-export { onConfigurationPageLoad, save, onAdvancedClicked, updateEmoteCache }
+export { onConfigurationPageLoad, save, onAdvancedClicked, updateEmoteCache, onMgbaLoadClicked }

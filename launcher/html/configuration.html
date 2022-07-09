@@ -14,6 +14,13 @@
         <input type="password" id="oauth" name="oauth"/>
         <label for="channel">Channel</label>
         <input type="text" id="channel" name="channel"/>
+        <label for="mgba">mGBA Executable Path</label>
+        <div class="file-selector">
+            <input type="text" id="mgba" name="mgba"/>
+            <button id="mgbaLoad">
+                <img src="../svg/search.svg"></object>
+            </button>
+        </div>
         <label>Lua script path:</label>
         <p id="luaScriptPath">...</p>
         <label>Emote cache last updated:</label>
@@ -29,7 +36,8 @@
         <button id="save">Save</button>
 
         <script type="module">
-            import { updateEmoteCache, onAdvancedClicked, save, onConfigurationPageLoad } from '../javascript/topPages/configuration.js'
+            import { updateEmoteCache, onAdvancedClicked, onMgbaLoadClicked, save, onConfigurationPageLoad } from '../javascript/topPages/configuration.js'
+            document.getElementById('mgbaLoad').addEventListener('click', onMgbaLoadClicked);
             document.getElementById('updateEmoteCache').addEventListener('click', updateEmoteCache);
             document.getElementById('advancedHeader').addEventListener('click', onAdvancedClicked);
             document.getElementById('save').addEventListener('click', save);
