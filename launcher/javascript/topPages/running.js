@@ -1,5 +1,6 @@
 const remote = require('electron').remote;
 const exec = require("child_process").exec;
+const spawn = require("child_process").spawn;
 const tmi = require('tmi.js');
 const fs = require('fs');
 const url = require('url');
@@ -15,7 +16,7 @@ const app = remote.app;
 const appDataPath = app.getPath('userData');
 
 async function runEmulator() {
-    exec("\"" + process.env.ProgramFiles + "\\mGBA\\mGBA.exe\""); //TODO: make this the default, but overriable
+    //exec("\"" + process.env.ProgramFiles + "\\mGBA\\mGBA.exe\""); //TODO: make this the default, but overriable
 }
 
 async function runBot() {

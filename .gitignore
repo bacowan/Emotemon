@@ -129,3 +129,7 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,node
 
 launcher/config.json
+mgbaAutomation/mgbaAutomation/mgbaAutomation/bin/*
+mgbaAutomation/mgbaAutomation/mgbaAutomation/obj/*
+mgbaAutomation/mgbaAutomation/packages/*
+mgbaAutomation/mgbaAutomation/.vs/*
