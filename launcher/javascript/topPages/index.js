@@ -1,5 +1,4 @@
 import { settingsFileName } from '../modules/constants.js';
-import { getCacheLastUpdated } from '../modules/emoteCache.js';
 const remote = require('electron').remote;
 const fs = require('fs');
 const path = require('path');
@@ -43,13 +42,7 @@ async function runBot() {
       setRunError("Bot is not fully configured");
    }
    else {
-      const emoteCacheLastUpdated = await getCacheLastUpdated();
-      if (emoteCacheLastUpdated == "never") {
-         setRunError("Need to update the emote cache (through Configure");
-      }
-      else {
-         window.location.href = 'running.html';
-      }
+      window.location.href = 'running.html';
    }
 }
 

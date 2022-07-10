@@ -28,9 +28,6 @@
         </div>
         <label>Lua script path:</label>
         <p id="luaScriptPath">...</p>
-        <label>Emote cache last updated:</label>
-        <p id="emoteCacheLastUpdate">...</p>
-        <button id="updateEmoteCache">Update emote cache</button>
         <h2 id="advancedHeader" class="clickable">
             Advanced ▶
         </h2>
@@ -44,7 +41,6 @@
             import { authenticate, updateEmoteCache, onAdvancedClicked, onMgbaLoadClicked, save, onConfigurationPageLoad } from '../javascript/topPages/configuration.js'
             document.getElementById('mgbaLoad').addEventListener('click', onMgbaLoadClicked);
             document.getElementById('authenticate').addEventListener('click', authenticate);
-            document.getElementById('updateEmoteCache').addEventListener('click', updateEmoteCache);
             document.getElementById('advancedHeader').addEventListener('click', onAdvancedClicked);
             document.getElementById('save').addEventListener('click', save);
             onConfigurationPageLoad();

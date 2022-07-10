@@ -1,4 +1,5 @@
 const remote = require('electron').remote;
+const exec = require("child_process").exec;
 const tmi = require('tmi.js');
 const fs = require('fs');
 const url = require('url');
@@ -12,6 +13,10 @@ import { defaultEmoteName } from '../modules/constants.js';
 
 const app = remote.app;
 const appDataPath = app.getPath('userData');
+
+async function runEmulator() {
+    exec("\"" + process.env.ProgramFiles + "\\mGBA\\mGBA.exe\""); //TODO: make this the default, but overriable
+}
 
 async function runBot() {
     try {
@@ -127,4 +132,4 @@ function restart() {
     window.location.reload();
 }
 
-export { runBot, configure, stop, restart }
+export { runEmulator, configure, stop, restart }

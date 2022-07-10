@@ -60,20 +60,9 @@ async function save() {
     await fs.promises.writeFile(configurationFilePath, JSON.stringify(configuration));
 }
 
-async function updateEmoteCache() {
-    await updateEmoteCacheDontWrite();
-    await updateEmoteCacheText();
-}
-
-async function updateEmoteCacheText() {
-    const cacheLastUpdated = await getCacheLastUpdated();
-    document.getElementById("emoteCacheLastUpdate").innerHTML = cacheLastUpdated.toLocaleString();
-}
-
 async function authenticate() {
     const clientId = configData.clientId;
-    const redirectUri = path.join(path.dirname(window.location.pathname), 'json_window.html').substring(1).replace(/\\/g, '/');
-
+    
     function uuid() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
           var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -87,9 +76,8 @@ async function authenticate() {
         }
     });
     popupWindow.webContents.on('did-finish-load', () => {
-        console.log(popupWindow.getURL());
         const hash = new URL(popupWindow.getURL()).hash;
-        if (hash) {
+        if (hash) { // TODO: Error handling
             document.getElementById('oauth').value = hash.substring(hash.indexOf('=') + 1, hash.indexOf('&'));
             popupWindow.close();
         }
@@ -103,4 +91,4 @@ async function authenticate() {
             + "&scope=chat%3Aread+chat%3Aedit");
 }
 
-export { onConfigurationPageLoad, save, onAdvancedClicked, updateEmoteCache, onMgbaLoadClicked, authenticate }
+export { onConfigurationPageLoad, save, onAdvancedClicked, onMgbaLoadClicked, authenticate }
