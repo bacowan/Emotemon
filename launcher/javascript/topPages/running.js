@@ -6,7 +6,7 @@ const fs = require('fs');
 const url = require('url');
 const path = require('path');
 const BrowserWindow = require('electron').remote.BrowserWindow; 
-import { settingsFileName, emoteCacheFileName } from '../modules/constants.js';
+import { settingsFileName } from '../modules/constants.js';
 import { log } from '../modules/logging.js';
 import { setupEmulatorPipe } from '../modules/emoteQueue.js';
 import { createPokemon, downloadEmote, formatEmote } from '../modules/pokemonCreation.js';
@@ -20,18 +20,25 @@ async function runEmulator() {
 }
 
 async function runBot() {
-    try {
-        log("Loading configuration");
-        const fullEmoteCachePath = path.join(appDataPath, emoteCacheFileName);
-        const data = await fs.promises.readFile(fullEmoteCachePath);
-        // TODO: Error handling
-        const configuration = await loadConfiguration();
+    const config = loadConfiguration();
+    if (!emulatorRunning(config)) {
+        log("Lua script not running")
+        return;
+    }
+    runBotWithConfiguration(config);
+
+    // try {
+    //     log("Loading configuration");
+    //     const fullEmoteCachePath = path.join(appDataPath, emoteCacheFileName);
+    //     const data = await fs.promises.readFile(fullEmoteCachePath);
+    //     // TODO: Error handling
+    //     const configuration = await loadConfiguration();
     
-        runBotWithConfiguration(JSON.parse(data), configuration);
-    }
-    catch(err) {
-        log("Failed to load emote cache. Please ensure that it is up to date.");
-    }
+    //     runBotWithConfiguration(JSON.parse(data), configuration);
+    // }
+    // catch(err) {
+    //     log("Failed to load emote cache. Please ensure that it is up to date.");
+    // }
 }
 
 async function loadConfiguration() {

@@ -118,8 +118,8 @@ end
 
 obj.levelsToExp = getLevelsToExp()
 
-obj.fileName = '\\\\.\\pipe\\doomred'
-obj.configFileName = '\\\\.\\pipe\\doomred-config'
+obj.fileName = '\\\\.\\pipe\\emotemon'
+obj.configFileName = '\\\\.\\pipe\\emontemon-config'
 
 obj.battleTypes = {
     ["none"]=0,

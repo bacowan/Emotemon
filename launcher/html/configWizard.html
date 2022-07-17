@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset = "UTF-8">
+		<title>Configuration</title>
+        <link rel="stylesheet" type="text/css" href="./styles.css"/>
+    </head>
+    <body class="settings">
+        <div id="step1" class="settings">
+            <h2>What is the channel name of your bot?</h2>
+            <p>(this can be your own channel, or a dedicated one)</p>
+            <input type="text" id="botName" name="botName"/>
+            <button id="step1-next">Next</button>
+        </div>
+        <div id="step2" class="settings">
+            <h2>Authenticate</h2>
+            <p>Use the Authenticate button to authenticate your bot. When the window pops up, log into your bot's twitch account. This will not work if you use a different account from the one you used in the previous step.</p>
+            <button id="authenticate">Authenticate</button>
+            <button id="step2-next">Next</button>
+        </div>
+        <div id="step3" class="settings">
+            <h2>Optional Settings</h2>
+            <!--put things like emote timeouts, emote costs, etc.-->
+            <button id="step3-next">Next</button>
+        </div>
+        <div id="step4" class="settings">
+            <h2>Advanced Settings</h2>
+            <label for="saveFilePath">Save File Name</label>
+            <input type="text" id="saveFilePath" name="saveFilePath"/>
+            <button id="step4-next">Next</button>
+        </div>
+        <div id="step5" class="settings">
+            <h2>Steps to run</h2>
+            <p>You will have to preform these steps every time you run Emotemon</p>
+            <h3>Acquire required software</h3>
+            <p>Make sure that you have <a href="https://mgba.io/downloads.html">the latest version of mGBA</a> and a copy of Pokemon Fire Red Version (U) (V1.1).</p>
+            <h3>Run mGBA and associated software</h3>
+            <ol>
+                <li>Run mGBA</li>
+                <li>Load the FireRed ROM</li>
+                <li>Load the lua script
+                    <ol>
+                        <li>Go to Tools -> Scripting...</li>
+                        <li>In the window that pops open, go to File -> Load Script...</li>
+                        <li>Navigate to <p id="lua-path"></p> and click Open</li>
+                        <li>Click Run in the main page of this app</li>
+                    </ol>
+                </li>
+            </ol>
+            <button id="step5-next">Finish</button>
+        </div>
+    </body>
+</html>

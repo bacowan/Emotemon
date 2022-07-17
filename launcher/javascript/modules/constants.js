@@ -1,9 +1,8 @@
 
-const emoteCacheFileName = "emoteCache.json";
-const settingsFileName = "settings.json";
+const settingsFileName = "emotemon_settings.json";
 const defaultEmoteName = "imGlitch";
 const defaultSaveFileName = "save";
-const pipeName = 'doomred'
-const configPipeName = 'doomred-config'
+const pipeName = 'emotemon'
+const configPipeName = 'emotemon-config'
 
-export { emoteCacheFileName, settingsFileName, defaultEmoteName, defaultSaveFileName, pipeName, configPipeName }
+export { settingsFileName, defaultEmoteName, defaultSaveFileName, pipeName, configPipeName }

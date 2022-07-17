@@ -18,7 +18,6 @@ async function onConfigurationPageLoad() {
         //document.getElementById('oauth').value = configuration.oauth;
         document.getElementById('channel').value = configuration.channel;
         document.getElementById('saveFilePath').value = configuration.saveFilePath;
-        document.getElementById('mgba').value = configuration.mgbaPath;
         await updateEmoteCacheText();
     }
     catch(err) {
@@ -34,28 +33,13 @@ async function onMgbaLoadClicked() {
     }
 }
 
-function onAdvancedClicked() {
-    const headerElement = document.getElementById('advancedHeader');
-    const divElement = document.getElementById('advancedDiv');
-
-    if (divElement.style.display == "none") {
-        headerElement.innerHTML = "Advanced ▼"
-        divElement.style.display = "block";
-    }
-    else {
-        headerElement.innerHTML = "Advanced ▶"
-        divElement.style.display = "none";
-    }
-}
-
 async function save() {
     const configurationFilePath = path.join(appDataPath, settingsFileName);
     const configuration = {
-        //botName: document.getElementById('botName').value,
-        //oauth: document.getElementById('oauth').value,
+        botName: document.getElementById('botName').value,
+        oauth: document.getElementById('oauth').value,
         channel: document.getElementById('channel').value,
-        saveFilePath: document.getElementById('saveFilePath').value,
-        mgbaPath: document.getElementById('mgba').value
+        saveFilePath: document.getElementById('saveFilePath').value
     };
     await fs.promises.writeFile(configurationFilePath, JSON.stringify(configuration));
 }
@@ -91,4 +75,4 @@ async function authenticate() {
             + "&scope=chat%3Aread+chat%3Aedit");
 }
 
-export { onConfigurationPageLoad, save, onAdvancedClicked, onMgbaLoadClicked, authenticate }
+export { onConfigurationPageLoad, save, onMgbaLoadClicked, authenticate }

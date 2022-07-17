@@ -19,29 +19,15 @@
         </div>
         <label for="channel">Channel</label>
         <input type="text" id="channel" name="channel"/>
-        <label for="mgba">mGBA Executable Path</label>
-        <div class="button-input">
-            <input type="text" id="mgba" name="mgba"/>
-            <button id="mgbaLoad">
-                <img src="../svg/search.svg"></object>
-            </button>
-        </div>
         <label>Lua script path:</label>
         <p id="luaScriptPath">...</p>
-        <h2 id="advancedHeader" class="clickable">
-            Advanced ▶
-        </h2>
-        <div id="advancedDiv" style="display: none;">
-            <label for="saveFilePath">Save File Name</label>
-            <input type="text" id="saveFilePath" name="saveFilePath"/>
-        </div>
+        <label for="saveFilePath">Save File Name</label>
+        <input type="text" id="saveFilePath" name="saveFilePath"/>
         <button id="save">Save</button>
 
         <script type="module">
             import { authenticate, updateEmoteCache, onAdvancedClicked, onMgbaLoadClicked, save, onConfigurationPageLoad } from '../javascript/topPages/configuration.js'
-            document.getElementById('mgbaLoad').addEventListener('click', onMgbaLoadClicked);
             document.getElementById('authenticate').addEventListener('click', authenticate);
-            document.getElementById('advancedHeader').addEventListener('click', onAdvancedClicked);
             document.getElementById('save').addEventListener('click', save);
             onConfigurationPageLoad();
         </script>

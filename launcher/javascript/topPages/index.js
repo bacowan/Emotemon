@@ -32,22 +32,49 @@ async function runBot() {
       const configurationText = await fs.promises.readFile(configurationFilePath);
       const configuration = JSON.parse(configurationText);
 
-      isConfigSetup = configuration.botName && configuration.oauth && configuration.channel;
+      isConfigSetup = configuration != null
+         && configuration.botName
+         && configuration.oauth
+         && configuration.channel
+         && configuration.saveFilePath;
    }
    catch {
       isConfigSetup = false;
    }
 
    if (!isConfigSetup) {
-      setRunError("Bot is not fully configured");
+      wizardPrompt();
    }
    else {
       window.location.href = 'running.html';
    }
 }
 
+function wizardPrompt() {
+   const tooltip = document.getElementById('error-toast');
+   tooltip.innerHTML = '';
+   const textElement = document.createTextNode("Bot is not fully configured. Run the wizard?");
+   tooltip.appendChild(textElement);
+   const yesButton = document.createElement('button');
+   yesButton.innerHTML = "Yes";
+   tooltip.appendChild(yesButton);
+   const noButton = document.createElement('button');
+   noButton.innerHTML = "No";
+   tooltip.appendChild(noButton);
+
+   noButton.addEventListener(
+      'click',
+      () => tooltip.className = tooltip.className.replace(" show", ""));
+
+   yesButton.addEventListener(
+      'click',
+      () => window.location.href = 'configWizard.html');
+
+   tooltip.className += " show";
+}
+
 function setRunError(errorMessage) {
-   const tooltip = document.getElementById('error-text');
+   const tooltip = document.getElementById('error-toast');
    tooltip.innerHTML = errorMessage;
    tooltip.className += " show";
    setTimeout(

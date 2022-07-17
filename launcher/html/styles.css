@@ -8,6 +8,7 @@
     --text-colour: #cecece;
     --input-text-colour: black;
     --toast-colour: #7e4b00;
+    --options-toast-colour: #b337b3;
 }
 
 script {
@@ -53,6 +54,7 @@ button {
     width: 12em;
     height: 3em;
     cursor: pointer;
+    margin: 0.1em;
 }
 
 button:hover {
@@ -192,7 +194,6 @@ ul.emote-queue > li > div > p {
 .toast {
     visibility: hidden;
     min-width: 250px;
-    background-color: var(--toast-colour);
     text-align: center;
     border-radius: 2px;
     padding: 16px;
@@ -204,28 +205,42 @@ ul.emote-queue > li > div > p {
     transform: translateX(-50%);
 }
 
+.error-toast {
+    background-color: var(--toast-colour);
+}
+
+.options-toast {
+    background-color: var(--options-toast-colour);
+}
+
+.toast {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 250ms ease-in, visibility 0ms ease-in 250ms;
+}
+
 .toast.show {
     visibility: visible;
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    animation: fadein 0.5s, fadeout 0.5s 2.5s;
-  }
+    opacity: 1;
+    transition: opacity 250ms ease-in, visibility 0ms ease-in 0ms;
+}
   
-  @-webkit-keyframes fadein {
+@-webkit-keyframes fadein {
     from {bottom: 0; opacity: 0;} 
     to {bottom: 30px; opacity: 1;}
-  }
-  
-  @keyframes fadein {
+}
+
+@keyframes fadein {
     from {bottom: 0; opacity: 0;}
     to {bottom: 30px; opacity: 1;}
-  }
-  
-  @-webkit-keyframes fadeout {
+}
+
+@-webkit-keyframes fadeout {
     from {bottom: 30px; opacity: 1;} 
     to {bottom: 0; opacity: 0;}
-  }
-  
-  @keyframes fadeout {
+}
+
+@keyframes fadeout {
     from {bottom: 30px; opacity: 1;}
     to {bottom: 0; opacity: 0;}
-  }
+}
