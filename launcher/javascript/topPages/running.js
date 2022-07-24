@@ -132,6 +132,10 @@ function configure() {
      }));
 }
 
+function start() {
+
+}
+
 function stop() {
     window.location.href = 'index.html';
 }
@@ -140,4 +144,4 @@ function restart() {
     window.location.reload();
 }
 
-export { runEmulator, configure, stop, restart }
+export { start, configure, stop, restart }

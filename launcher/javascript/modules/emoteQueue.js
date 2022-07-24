@@ -1,7 +1,25 @@
 const net = require('net');
 const path = require('path');
+const remote = require('electron').remote;
 import { log, unlogQueueEmote, logQueueEmote } from './logging.js';
 import { formatAsString } from './pokemonCreation.js'
+import { liveStatusRequestPipeName } from './constants.js';
+
+const tempFilePath = process.env.TMP;
+
+async function isLuaScriptListening(saveFilePath) {
+    return await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => resolve(false), 20000);
+        const server = net.createServer(c => {
+            server.close();
+            clearTimeout(timeout);
+            resolve(true);
+        });
+        server.listen(
+            path.join('\\\\.\\pipe\\' + liveStatusRequestPipeName)
+        );
+    });
+}
 
 function setupEmulatorPipe(saveFilePath, defaultPixels, defaultPalette) {
     const emoteQueue = [];
@@ -50,4 +68,4 @@ function setupConfigurationPipe(saveFilePath, defaultPixels, defaultPalette) {
     );
 }
 
-export { setupEmulatorPipe }
+export { setupEmulatorPipe, isLuaScriptListening }

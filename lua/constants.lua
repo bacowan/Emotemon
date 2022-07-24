@@ -106,7 +106,8 @@ obj.substructureOrders = {
 
 function getLevelsToExp()
     local levelsToExpCsv = {}
-    for line in io.lines('levels.csv') do
+    print(os.execute("cd"))
+    for line in io.lines('C:/Users/bccow/programming/Emotemon/lua/levels.csv') do
         levelsToExpCsv[#levelsToExpCsv+1] = line
     end
     local ret = {}
@@ -120,6 +121,8 @@ obj.levelsToExp = getLevelsToExp()
 
 obj.fileName = '\\\\.\\pipe\\emotemon'
 obj.configFileName = '\\\\.\\pipe\\emontemon-config'
+obj.liveStatusRequestFileName = '\\\\.\\pipe\\emotemon-live-request'
+obj.liveStatusResponseFileName = '\\\\.\\pipe\\emotemon-live-response'
 
 obj.battleTypes = {
     ["none"]=0,

@@ -1,4 +1,5 @@
 import { settingsFileName } from '../modules/constants.js';
+import { isLuaScriptListening } from '../modules/emoteQueue.js';
 const remote = require('electron').remote;
 const fs = require('fs');
 const path = require('path');
@@ -43,11 +44,19 @@ async function runBot() {
    }
 
    if (!isConfigSetup) {
-      wizardPrompt();
+      setRunError("Configuration is not set");
+      return;
    }
-   else {
-      window.location.href = 'running.html';
+
+   //TODO: Give some better feedback for the wait
+   console.log('checking for lua script...');
+   if (!await isLuaScriptListening()) {
+      setRunError("Could not detect mGBA LUA script. Make sure that FireRed is running with the LUA script");
+      return;
    }
+   
+   window.location.href = 'running.html';
+      
 }
 
 function wizardPrompt() {
