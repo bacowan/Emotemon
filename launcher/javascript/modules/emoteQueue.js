@@ -5,12 +5,17 @@ import { log, unlogQueueEmote, logQueueEmote } from './logging.js';
 import { formatAsString } from './pokemonCreation.js'
 import { liveStatusRequestPipeName } from './constants.js';
 
-const tempFilePath = process.env.TMP;
-
 async function isLuaScriptListening(saveFilePath) {
     return await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => resolve(false), 20000);
-        const server = net.createServer(c => {
+        let server;
+        const timeout = setTimeout(() =>
+        {
+            if (server != null) {
+                server.close();
+            }
+            resolve(false);
+        }, 15000);
+        server = net.createServer(c => {
             server.close();
             clearTimeout(timeout);
             resolve(true);
@@ -25,18 +30,16 @@ function setupEmulatorPipe(saveFilePath, defaultPixels, defaultPalette) {
     const emoteQueue = [];
 
     setupQueuePipe(emoteQueue);
-    setupConfigurationPipe(
+    /*setupConfigurationPipe(
         saveFilePath,
         defaultPixels.map(p => p.toString(16).padStart(2, '0')).join(''),
-        defaultPalette.map(p => p.toString(16).padStart(2, '0')).join(''));
+        defaultPalette.map(p => p.toString(16).padStart(2, '0')).join(''));*/
 
-    return {
-        queueEmote(emote) {
-            const emoteText = formatAsString(emote);
-            emoteQueue.push(emoteText);
-            logQueueEmote(emote);
-        }
-    }
+    return function(emote) {
+        const emoteText = formatAsString(emote);
+        emoteQueue.push(emoteText);
+        logQueueEmote(emote);
+    };
 }
 
 function setupQueuePipe(emoteQueue) {

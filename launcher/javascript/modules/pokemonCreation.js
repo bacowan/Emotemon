@@ -4,11 +4,11 @@ const resizeImg = require('resize-img');
 import { attackCount, abilityCount, types, movePPs } from './pokemonConstants.js';
 import { compress } from './lzss/lzss.js';
 
-const emoteUrlTop = "https://static-cdn.jtvnw.net/emoticons/v1";
-const emoteSize = "2.0";
+const emoteUrlTop = "https://static-cdn.jtvnw.net/emoticons/v2/";
+const emoteEndUrl = "/static/dark/2.0";
 
 async function downloadEmote(emoteId) {
-	const fullEmoteUrl = emoteUrlTop + "/" + emoteId + "/" + emoteSize;
+	const fullEmoteUrl = emoteUrlTop + "/" + emoteId + "/" + emoteEndUrl;
     const response = await fetch(fullEmoteUrl);
     if (response.ok) {
         return await response.arrayBuffer();

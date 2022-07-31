@@ -1,8 +1,20 @@
-function log(string) {
+function log(string, level = "info") {
     const time = new Date();
     const logDiv = document.getElementById('logs');
     const li = document.createElement('li');
     li.innerHTML = time.toLocaleTimeString() + ": " + string;
+    if (level == "message") {
+        li.setAttribute("style", "color:green");
+    }
+    else if (level == "warning") {
+        li.setAttribute("style", "color:yellow");
+    }
+    else if (level == "error") {
+        li.setAttribute("style", "color:red; font-weight:bold");
+    }
+    else {
+        li.setAttribute("style", "color:gray");
+    }
     logDiv.appendChild(li);
 }
 

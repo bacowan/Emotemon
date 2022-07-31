@@ -1,5 +1,5 @@
 import { settingsFileName } from '../modules/constants.js';
-import { isLuaScriptListening } from '../modules/emoteQueue.js';
+import { validateSetup } from '../modules/validating.js';
 const remote = require('electron').remote;
 const fs = require('fs');
 const path = require('path');
@@ -26,37 +26,9 @@ function configure() {
 }
 
 async function runBot() {
-   let isConfigSetup;
-   try {
-      const configurationFilePath = path.join(appDataPath, settingsFileName);
-      await fs.promises.access(configurationFilePath);
-      const configurationText = await fs.promises.readFile(configurationFilePath);
-      const configuration = JSON.parse(configurationText);
-
-      isConfigSetup = configuration != null
-         && configuration.botName
-         && configuration.oauth
-         && configuration.channel
-         && configuration.saveFilePath;
+   if (await validateSetup()) {
+      window.location.href = 'running.html';
    }
-   catch {
-      isConfigSetup = false;
-   }
-
-   if (!isConfigSetup) {
-      setRunError("Configuration is not set");
-      return;
-   }
-
-   //TODO: Give some better feedback for the wait
-   console.log('checking for lua script...');
-   if (!await isLuaScriptListening()) {
-      setRunError("Could not detect mGBA LUA script. Make sure that FireRed is running with the LUA script");
-      return;
-   }
-   
-   window.location.href = 'running.html';
-      
 }
 
 function wizardPrompt() {
